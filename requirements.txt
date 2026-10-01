@@ -1,0 +1,12 @@
+numpy
+pandas
+pyyaml
+pytest
+matplotlib
+jupyter
+scikit-learn
+scipy
+
+# Phase 2 — uncomment when Part D1+ starts
+# torch
+# evo

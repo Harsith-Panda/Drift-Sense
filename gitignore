@@ -1,0 +1,30 @@
+# Raw & intermediate data — large, regeneratable from scripts/make_windows.py,
+# and data/raw/ in particular can be 10+ GB. Never commit these.
+data/raw/
+data/interim/
+
+# Keep data/processed/ TRACKED — it's the small (~18 MB total), final
+# hand-off artifact Part B/C/D depend on. Do not add it here.
+
+# Python
+venv/
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Models (Phase 2) — large, regeneratable from training scripts
+models/ml/*.joblib
+models/dl/*.pt
+models/dl/*.pth
+
+# OS junk
+.DS_Store
+Thumbs.db
+
+# Editor/IDE
+.vscode/
+.idea/

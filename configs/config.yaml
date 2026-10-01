@@ -1,0 +1,26 @@
+# VIO Drift Prediction — Part A config
+# Edit paths to match where you extracted the EuRoC sequences.
+
+data:
+  raw_dir: "data/raw/euroc"          # expects raw_dir/<seq_name>/mav0/...
+  interim_dir: "data/interim"
+  processed_dir: "data/processed"
+  sequences:
+    - "MH_01_easy"
+    - "MH_02_easy"
+    - "MH_03_medium"
+
+windowing:
+  window_seconds: 1.0     # length of each window
+  stride_seconds: 0.25    # how far the window slides each step
+  imu_rate_hz: 200         # EuRoC IMU nominal rate; used only as a sanity check
+
+integration:
+  gravity_magnitude: 9.81
+  # Leave both as null the first time you run make_windows.py.
+  # The pipeline will auto-calibrate these from the first sequence's data
+  # and print what it found — then you can pin them here for reproducibility.
+  gravity_sign: -1        # will become +1 or -1
+  rotation_convention: "body_to_world" # will become "body_to_world" or "world_to_body"
+
+seed: 42

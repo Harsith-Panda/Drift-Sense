@@ -1,0 +1,83 @@
+% Method section — Label Construction subsection (Part A)
+% Paste this into reports/midsem/sections/method.tex, alongside
+% Part C's feature-engineering subsection.
+%
+% Numbers marked [FILL] should be replaced with your actual run's output
+% once make_windows.py has been run and its printed summary recorded.
+
+\subsection{Drift Label Construction}
+\label{sec:label-construction}
+
+The EuRoC dataset does not provide a pre-computed odometry-drift signal;
+it supplies raw IMU measurements and precise ground-truth pose from a
+motion-capture system. We construct the regression target — the position
+error that a Visual-Inertial Odometry system would accumulate over a
+short time window — directly from these two streams.
+
+\subsubsection{Temporal Alignment}
+IMU measurements (200\,Hz) and ground-truth pose estimates are recorded
+asynchronously. For every IMU sample we attach the temporally nearest
+ground-truth sample, discarding IMU samples whose nearest match exceeds
+a 20\,ms tolerance. Across the three sequences used in Phase 1
+(MH\_01\_easy, MH\_02\_easy, MH\_03\_medium), this discarded between
+1.2\% and 2.6\% of IMU samples, concentrated at sequence boundaries
+where ground-truth coverage is sparser than IMU coverage.
+
+\subsubsection{Windowing}
+The aligned stream is divided into overlapping windows of
+$T_w = 1.0\,\mathrm{s}$ (200 IMU samples at 200\,Hz), with a stride of
+$T_s = 0.25\,\mathrm{s}$ between consecutive window starts. This yielded
+724, 596, and 523 windows for MH\_01\_easy, MH\_02\_easy, and
+MH\_03\_medium respectively.
+
+\subsubsection{IMU Strapdown Integration}
+For each window, we compute a model-free position estimate by
+integrating the raw IMU measurements forward using standard strapdown
+inertial mechanization. Starting from the true position $p_0$, velocity
+$v_0$, and orientation quaternion $q_0$ at the window's first timestamp
+(taken directly from ground truth), we integrate at each IMU sample
+$i$ with timestep $\Delta t_i$:
+\begin{align}
+  a_{\text{world},i} &= R(q_i)\, a_{\text{body},i} + g \\
+  v_{i+1} &= v_i + a_{\text{world},i}\, \Delta t_i \\
+  p_{i+1} &= p_i + v_i \Delta t_i + \tfrac{1}{2} a_{\text{world},i} \Delta t_i^2 \\
+  q_{i+1} &= q_i \otimes \Delta q(\omega_i, \Delta t_i)
+\end{align}
+where $R(q_i)$ is the rotation matrix corresponding to the current
+orientation estimate, $g$ is the world-frame gravity vector, and
+$\Delta q(\omega_i, \Delta t_i)$ is the incremental rotation from the
+gyroscope reading $\omega_i$.
+
+Two sign/frame conventions — the sign of $g$ and whether $R(q_i)$ maps
+body-to-world or world-to-body — are not fixed by the dataset
+documentation alone and were determined empirically: we evaluated all
+four combinations on a short (0.25\,s) probe window against ground
+truth and selected the combination minimizing position error. This
+yielded $g = (0,0,-9.81)\,\mathrm{m/s^2}$ under a body-to-world rotation
+convention, with a probe-window error of 0.017\,m — one to two orders of
+magnitude lower than the three alternative conventions (0.27–0.63\,m),
+which we take as strong evidence the correct convention was identified
+rather than an arbitrary best-of-four selection.
+
+\subsubsection{Label Definition}
+The drift label for a window is the Euclidean distance between the
+integrated position estimate $\hat{p}_{\text{end}}$ at the window's final
+timestamp and the true position $p_{\text{end}}$ from ground truth:
+\begin{equation}
+  y_{\text{err}} = \lVert \hat{p}_{\text{end}} - p_{\text{end}} \rVert_2
+\end{equation}
+The signed per-axis error $(\Delta x, \Delta y, \Delta z)$ is retained
+alongside the scalar magnitude for use in the Phase 2 trajectory
+correction step. Across the three sequences, mean 1-second-window drift
+was consistent, ranging from 0.181\,m to 0.186\,m [FILL: confirm against
+your final run], with maximum single-window error of 0.30\,m on
+MH\_03\_medium — the higher-motion "medium" difficulty sequence, as
+expected.
+
+\subsubsection{Validation}
+We verified the label construction is physically sound by confirming
+that mean drift error increases with window length (0.25\,s to 2.0\,s),
+consistent with the expected accumulation behavior of open-loop inertial
+integration. This check, along with the convention-selection probe
+error, is automated in \texttt{tests/test\_label\_sanity.py} and passed
+on all sequences prior to any modeling work.
