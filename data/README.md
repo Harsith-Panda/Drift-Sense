@@ -52,3 +52,6 @@ Produces, per sequence, in `data/processed/`:
 python scripts/window_length_diagnostic.py
 ```
 writes `results/diagnostics/window_length.csv`.
+
+Part B adds `data/processed/splits.json` (leave-one-sequence-out folds)
+and EDA figures under `figures/eda/` (`python scripts/run_eda.py`).

@@ -1,0 +1,27 @@
+{
+  "scheme": "leave_one_sequence_out",
+  "reason": "Windows overlap (1.0 s length, 0.25 s stride). A random row split would put neighbouring windows in both train and test and leak the label.",
+  "window_seconds": 1.0,
+  "stride_seconds": 0.25,
+  "primary_target": "err_mag_m",
+  "axis_targets": ["err_dx", "err_dy", "err_dz"],
+  "comparison_targets": ["err_mag_m_bc", "err_dx_bc", "err_dy_bc", "err_dz_bc"],
+  "sequences": ["MH_01_easy", "MH_02_easy", "MH_03_medium"],
+  "folds": [
+    {
+      "fold_id": "leave_MH_01_easy",
+      "train": ["MH_02_easy", "MH_03_medium"],
+      "test": ["MH_01_easy"]
+    },
+    {
+      "fold_id": "leave_MH_02_easy",
+      "train": ["MH_01_easy", "MH_03_medium"],
+      "test": ["MH_02_easy"]
+    },
+    {
+      "fold_id": "leave_MH_03_medium",
+      "train": ["MH_01_easy", "MH_02_easy"],
+      "test": ["MH_03_medium"]
+    }
+  ]
+}

@@ -26,3 +26,8 @@ pip install -r requirements.txt
 ```
 
 Then run scripts from the repo root, e.g. `python scripts/verify_data.py`.
+
+```bash
+python scripts/make_windows.py    # Part A labels
+python scripts/run_eda.py         # Part B figures → figures/eda/
+```

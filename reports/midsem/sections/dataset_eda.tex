@@ -1,0 +1,84 @@
+% Dataset & EDA section (Part B)
+% Include from reports/midsem/main.tex.
+
+\section{Dataset and Exploratory Analysis}
+\label{sec:dataset-eda}
+
+\subsection{EuRoC MAV}
+We use three Machine Hall sequences from the EuRoC MAV dataset
+\cite{burri2016euroc}: MH\_01\_easy, MH\_02\_easy, and MH\_03\_medium.
+Each flight is a few minutes of a real hexacopter with a stereo camera and
+an ADIS16448 IMU. Phase~1 uses only \texttt{imu0/data.csv} (gyroscope in
+rad/s, accelerometer specific force in m/s$^2$, nominally 200\,Hz) and
+\texttt{state\_groundtruth\_estimate0/data.csv} (position, Hamilton
+quaternion, velocity, and IMU biases). Camera images are reserved for
+Phase~2.
+
+\subsection{Data quality}
+Table~\ref{tab:quality} summarises the three streams after loading.
+There are no missing values. Both IMU and the provided ground-truth
+estimate are sampled at 200\,Hz with a 5\,ms median step and negligible
+jitter. Nearest-timestamp alignment drops 1.17\%, 1.32\%, and 2.58\% of
+IMU rows (MH\_01--MH\_03), almost entirely at sequence edges where
+ground-truth coverage starts later than the IMU. We treat those drops as
+coverage gaps, not sensor faults.
+
+\begin{table}[t]
+\centering
+\caption{Sequence-level quality checks.}
+\label{tab:quality}
+\begin{tabular}{lrrrrr}
+\hline
+Sequence & IMU rows & Duration (s) & Rate (Hz) & Missing & Align drop \\
+\hline
+MH\_01\_easy & 36820 & 184.1 & 200 & 0 & 1.17\% \\
+MH\_02\_easy & 30400 & 152.0 & 200 & 0 & 1.32\% \\
+MH\_03\_medium & 27008 & 135.0 & 200 & 0 & 2.58\% \\
+\hline
+\end{tabular}
+\end{table}
+
+Raw gyro over the first 10\,s of MH\_01 is small-amplitude chatter
+($\sim$0.2\,rad/s), i.e.\ noise plus slow attitude change rather than
+aggressive spins. Accelerometer magnitude stays near $g$; the vehicle is
+pitched, so gravity appears on $a_x$ and $a_z$ together, not on $a_z$
+alone.
+
+\subsection{Easy versus medium}
+Ground-truth speed distinguishes the labels: mean 0.44\,m/s and
+0.49\,m/s on the two easy flights versus 0.99\,m/s on MH\_03 (peaks
+2.8\,m/s). Path length is $\sim$81\,m and $\sim$74\,m versus $\sim$131\,m.
+Mean gyro magnitude is also higher on MH\_03 (0.29 vs 0.21\,rad/s).
+The 3-D trajectories occupy a similar machine-hall volume; MH\_03 is
+``medium'' because of speed and turning, not a larger room.
+
+\subsection{Drift label}
+The headline target is the 1\,s raw-IMU position error $y=\texttt{err\_mag\_m}$.
+Across 724 / 596 / 523 overlapping windows the means are 0.186, 0.186,
+and 0.181\,m with standard deviations 0.012, 0.013, and 0.021\,m.
+The easy-sequence histograms are tight and slightly left-skewed; MH\_03
+is a little wider (max 0.30\,m) but still not a long tail. We therefore
+\textbf{do not} log-transform the primary target.
+
+The same windows after subtracting the dataset's ground-truth IMU biases
+(\texttt{err\_mag\_m\_bc}) have means 0.021, 0.018, and 0.030\,m. MH\_03
+then shows the most residual structure (max 0.176\,m, skew 2.3). This
+supports the claim that 1\,s raw drift is bias-dominated; the
+bias-corrected series is an oracle comparison, not the leaderboard
+target. Signed axis errors $({\Delta}x,{\Delta}y,{\Delta}z)$ vary more
+than the Euclidean magnitude, so Phase~1 models should also be trained
+on the 3-axis target.
+
+Mean error versus window length (0.25--2.0\,s) grows superlinearly for
+the raw integrator ($\sim$6\,mm at 0.25\,s to $\sim$1.2\,m at 2\,s) and
+remains much smaller after bias correction. The primary window stays
+1.0\,s / 0.25\,s stride as specified.
+
+\subsection{Train/test protocol}
+Windows overlap by 75\%. A random split of rows would place nearly
+identical IMU slices in both train and test and inflate $R^2$. We use
+leave-one-sequence-out, recorded in \texttt{data/processed/splits.json}:
+train on two flights, test on the third, rotated three times. The
+leakage test \texttt{tests/test\_no\_leakage.py} asserts that no
+sequence appears on both sides of any fold. The primary target in that
+file is \texttt{err\_mag\_m}.
