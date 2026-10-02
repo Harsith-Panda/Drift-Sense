@@ -2,6 +2,11 @@
 Turn one Window (from windowing.py) into a drift label by comparing the
 IMU-integrated predicted end position against the true (ground-truth) end
 position.
+
+Primary fields (err_mag_m, err_dx/dy/dz) always come from raw IMU.
+err_*_bc fields are a documented oracle comparison: the same integration
+after subtracting the dataset's ground-truth bias estimates. They do not
+replace the headline target.
 """
 from __future__ import annotations
 
@@ -23,6 +28,10 @@ class DriftLabel:
     err_dx: float
     err_dy: float
     err_dz: float
+    err_mag_m_bc: float | None = None
+    err_dx_bc: float | None = None
+    err_dy_bc: float | None = None
+    err_dz_bc: float | None = None
 
 
 def compute_drift_label(
@@ -30,15 +39,20 @@ def compute_drift_label(
     gravity_magnitude: float,
     gravity_sign: int,
     rotation_convention: str,
+    subtract_bias: bool = False,
 ) -> DriftLabel | None:
     """
-    Returns None (and prints why) if the window's first row is missing the
-    ground-truth columns needed to seed integration — this can happen for
-    a handful of edge windows and is fine to drop, not fine to crash on.
+    Integrate once (raw or bias-corrected) and return magnitude + 3-axis error.
+
+    Returns None (and prints why) if the window is missing the ground-truth
+    columns needed to seed integration — this can happen for a handful of
+    edge windows and is fine to drop, not fine to crash on.
     """
     rows = window.rows
     required = ["gt_px", "gt_py", "gt_pz", "gt_vx", "gt_vy", "gt_vz",
                 "gt_qw", "gt_qx", "gt_qy", "gt_qz"]
+    if subtract_bias:
+        required = required + ["gt_bgx", "gt_bgy", "gt_bgz", "gt_bax", "gt_bay", "gt_baz"]
     if rows[required].isna().any().any():
         print(f"[drift_label] {window.seq_name} window {window.window_id}: "
               f"missing ground-truth values, skipping")
@@ -56,6 +70,7 @@ def compute_drift_label(
         gravity_magnitude=gravity_magnitude,
         gravity_sign=gravity_sign,
         rotation_convention=rotation_convention,
+        subtract_bias=subtract_bias,
     )
 
     err_vec = result.p_end - p_true_end
@@ -69,3 +84,37 @@ def compute_drift_label(
         err_dy=float(err_vec[1]),
         err_dz=float(err_vec[2]),
     )
+
+
+def compute_window_labels(
+    window: Window,
+    gravity_magnitude: float,
+    gravity_sign: int,
+    rotation_convention: str,
+) -> DriftLabel | None:
+    """Primary raw-IMU label plus bias-corrected comparison on the same window."""
+    raw = compute_drift_label(
+        window,
+        gravity_magnitude=gravity_magnitude,
+        gravity_sign=gravity_sign,
+        rotation_convention=rotation_convention,
+        subtract_bias=False,
+    )
+    if raw is None:
+        return None
+
+    bc = compute_drift_label(
+        window,
+        gravity_magnitude=gravity_magnitude,
+        gravity_sign=gravity_sign,
+        rotation_convention=rotation_convention,
+        subtract_bias=True,
+    )
+    if bc is None:
+        return None
+
+    raw.err_mag_m_bc = bc.err_mag_m
+    raw.err_dx_bc = bc.err_dx
+    raw.err_dy_bc = bc.err_dy
+    raw.err_dz_bc = bc.err_dz
+    return raw

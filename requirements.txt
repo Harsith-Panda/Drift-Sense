@@ -1,12 +1,15 @@
-numpy
-pandas
-pyyaml
-pytest
-matplotlib
-jupyter
-scikit-learn
-scipy
+# Pip fallback for Phase 1. Prefer: conda env create -f environment.yml
+# Versions match the `drift-sense` conda-forge env created from environment.yml.
+numpy==2.4.6
+pandas==3.0.6
+pyyaml==6.0.3
+pytest==9.1.1
+matplotlib==3.11.2
+jupyter==1.1.1
+ipykernel==7.4.0
+scikit-learn==1.9.1
+scipy==1.17.1
 
-# Phase 2 — uncomment when Part D1+ starts
+# Phase 2 — uncomment when DL work starts
 # torch
 # evo

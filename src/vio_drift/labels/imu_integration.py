@@ -19,6 +19,12 @@ enough to check a one-step prediction) and picks whichever combination
 gives the smallest position error. This is empirical, not guessed —
 but it depends on your actual ground-truth sampling being fine enough
 to test a short step; if it isn't, the function says so.
+
+`subtract_bias` is a diagnostic switch, not the headline pipeline:
+when True, gyro/accel have the aligned ground-truth bias estimates
+removed before integration. Primary labels always use raw IMU
+(`subtract_bias=False`). Convention calibration is also always run on
+raw IMU.
 """
 from __future__ import annotations
 
@@ -69,6 +75,10 @@ def quat_from_angular_rate(omega: np.ndarray, dt: float) -> np.ndarray:
     return np.array([np.cos(half), *(axis * np.sin(half))])
 
 
+BIAS_GYRO_COLS = ["gt_bgx", "gt_bgy", "gt_bgz"]
+BIAS_ACCEL_COLS = ["gt_bax", "gt_bay", "gt_baz"]
+
+
 # ---------------------------- integration core ----------------------------
 
 @dataclass
@@ -86,15 +96,19 @@ def integrate_window(
     gravity_magnitude: float = 9.81,
     gravity_sign: int = -1,
     rotation_convention: str = "body_to_world",
+    subtract_bias: bool = False,
 ) -> IntegrationResult:
     """
-    Integrate one window's raw gyro+accel readings forward from a known
+    Integrate one window's gyro+accel readings forward from a known
     starting state (p0, v0, q0), using simple forward-Euler strapdown
     mechanization (adequate at 200 Hz over ~1 s windows for this project;
     not claiming research-grade INS accuracy).
 
     gravity_sign / rotation_convention: see module docstring. Get these
     from calibrate_conventions() — don't hand-pick them.
+
+    subtract_bias: if True, subtract per-row ground-truth gyro/accel
+    biases (oracle diagnostic). Default False is the primary label.
     """
     p = p0.copy().astype(np.float64)
     v = v0.copy().astype(np.float64)
@@ -103,8 +117,17 @@ def integrate_window(
     g_world = np.array([0.0, 0.0, gravity_sign * gravity_magnitude])
 
     t = window_rows["t_ns"].to_numpy()
-    gyro = window_rows[["gx", "gy", "gz"]].to_numpy()
-    accel = window_rows[["ax", "ay", "az"]].to_numpy()
+    gyro = window_rows[["gx", "gy", "gz"]].to_numpy(dtype=np.float64)
+    accel = window_rows[["ax", "ay", "az"]].to_numpy(dtype=np.float64)
+
+    if subtract_bias:
+        missing = [c for c in BIAS_GYRO_COLS + BIAS_ACCEL_COLS if c not in window_rows.columns]
+        if missing:
+            raise ValueError(
+                f"subtract_bias=True requires ground-truth bias columns, missing: {missing}"
+            )
+        gyro = gyro - window_rows[BIAS_GYRO_COLS].to_numpy(dtype=np.float64)
+        accel = accel - window_rows[BIAS_ACCEL_COLS].to_numpy(dtype=np.float64)
 
     for i in range(len(window_rows) - 1):
         dt = (t[i + 1] - t[i]) / 1e9

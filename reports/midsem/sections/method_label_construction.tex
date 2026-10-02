@@ -68,11 +68,19 @@ timestamp and the true position $p_{\text{end}}$ from ground truth:
 \end{equation}
 The signed per-axis error $(\Delta x, \Delta y, \Delta z)$ is retained
 alongside the scalar magnitude for use in the Phase 2 trajectory
-correction step. Across the three sequences, mean 1-second-window drift
-was consistent, ranging from 0.181\,m to 0.186\,m [FILL: confirm against
-your final run], with maximum single-window error of 0.30\,m on
-MH\_03\_medium — the higher-motion "medium" difficulty sequence, as
-expected.
+correction step and as additional Phase 1 regression targets. Across the
+three sequences, mean 1-second-window \emph{raw}-IMU drift was consistent,
+ranging from 0.181\,m to 0.186\,m, with maximum single-window error of
+0.30\,m on MH\_03\_medium. After oracle bias subtraction the same 1\,s
+windows have mean residual 0.018--0.030\,m (MH\_03 still the largest).
+
+The same windows are also integrated after subtracting the dataset's
+ground-truth IMU bias estimates. The resulting columns
+(\texttt{err\_mag\_m\_bc}, \texttt{err\_dx/dy/dz\_bc}) are an oracle
+comparison, not a replacement of the approved raw-IMU target: a deployed
+estimator is not handed those biases, and all features remain raw IMU.
+Whether the residual is more motion-dependent is measured in the EDA,
+not assumed.
 
 \subsubsection{Validation}
 We verified the label construction is physically sound by confirming

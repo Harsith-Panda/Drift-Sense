@@ -21,7 +21,7 @@ from vio_drift.data.loader import load_sequence
 from vio_drift.data.align import align_imu_to_groundtruth
 from vio_drift.data.windowing import make_windows
 from vio_drift.labels.imu_integration import calibrate_conventions
-from vio_drift.labels.drift_label import compute_drift_label
+from vio_drift.labels.drift_label import compute_drift_label, compute_window_labels
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -95,4 +95,43 @@ def test_calibration_probe_error_is_reasonable():
         f"Best-case probe error is {best['probe_error_m']:.2f} m over a very "
         f"short window — too high to trust. Re-check loader.py's column "
         f"mapping against your actual CSV headers (scripts/verify_data.py)."
+    )
+
+
+@pytest.mark.skipif(not _seq_available("MH_01_easy"), reason="MH_01_easy not downloaded")
+def test_bias_corrected_error_is_smaller_than_raw():
+    """
+    Oracle check: subtracting the dataset's own gyro/accel bias estimates
+    should reduce mean 1 s position error. If it does not, subtract_bias
+    is using the wrong columns or the wrong frame.
+    """
+    cfg = _config()
+    imu_df, gt_df = load_sequence(ROOT / cfg["data"]["raw_dir"], "MH_01_easy")
+    aligned = align_imu_to_groundtruth(imu_df, gt_df)
+    windows = make_windows(
+        aligned, "MH_01_easy",
+        window_seconds=1.0, stride_seconds=1.0, expected_rows=None,
+    )
+
+    raw_errs, bc_errs = [], []
+    for w in windows[:50]:
+        lab = compute_window_labels(
+            w,
+            gravity_magnitude=cfg["integration"]["gravity_magnitude"],
+            gravity_sign=cfg["integration"]["gravity_sign"],
+            rotation_convention=cfg["integration"]["rotation_convention"],
+        )
+        if lab is None or lab.err_mag_m_bc is None:
+            continue
+        raw_errs.append(lab.err_mag_m)
+        bc_errs.append(lab.err_mag_m_bc)
+
+    assert raw_errs, "no valid windows for bias-correction check"
+    mean_raw = sum(raw_errs) / len(raw_errs)
+    mean_bc = sum(bc_errs) / len(bc_errs)
+    print(f"\nmean raw 1s error: {mean_raw:.4f} m")
+    print(f"mean bias-corrected 1s error: {mean_bc:.4f} m")
+    assert mean_bc < mean_raw, (
+        f"bias-corrected mean ({mean_bc:.4f} m) is not smaller than raw "
+        f"({mean_raw:.4f} m) — check subtract_bias column mapping."
     )

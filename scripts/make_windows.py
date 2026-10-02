@@ -4,8 +4,9 @@ End-to-end Part A pipeline for one or all sequences:
 
 Produces, per sequence, in data/processed/:
   windows_<seq>.csv       (seq_id, window_id, t_start_ns, t_end_ns,
-                            err_mag_m, err_dx, err_dy, err_dz)
-  windows_raw_<seq>.npy   (N_windows, 200, 6) — gx,gy,gz,ax,ay,az
+                            err_mag_m, err_dx, err_dy, err_dz,
+                            err_mag_m_bc, err_dx_bc, err_dy_bc, err_dz_bc)
+  windows_raw_<seq>.npy   (N_windows, 200, 6) — gx,gy,gz,ax,ay,az  (always RAW)
 
 Usage:
     python scripts/make_windows.py
@@ -25,7 +26,7 @@ from vio_drift.data.loader import load_sequence
 from vio_drift.data.align import align_imu_to_groundtruth, save_aligned, report_gaps
 from vio_drift.data.windowing import make_windows, stack_raw_imu
 from vio_drift.labels.imu_integration import calibrate_conventions
-from vio_drift.labels.drift_label import compute_drift_label
+from vio_drift.labels.drift_label import compute_window_labels
 
 
 def main() -> None:
@@ -86,7 +87,7 @@ def main() -> None:
         kept_windows = []
         kept_labels = []
         for w in windows:
-            lab = compute_drift_label(
+            lab = compute_window_labels(
                 w, gravity_magnitude=gravity_magnitude,
                 gravity_sign=gravity_sign, rotation_convention=rotation_convention,
             )
@@ -104,6 +105,10 @@ def main() -> None:
                 "err_dx": lab.err_dx,
                 "err_dy": lab.err_dy,
                 "err_dz": lab.err_dz,
+                "err_mag_m_bc": lab.err_mag_m_bc,
+                "err_dx_bc": lab.err_dx_bc,
+                "err_dy_bc": lab.err_dy_bc,
+                "err_dz_bc": lab.err_dz_bc,
             }
             for lab in kept_labels
         ])
@@ -120,6 +125,12 @@ def main() -> None:
             f"[summary] {seq_name}: err_mag_m mean={labels_df['err_mag_m'].mean():.4f}, "
             f"median={labels_df['err_mag_m'].median():.4f}, "
             f"max={labels_df['err_mag_m'].max():.4f}"
+        )
+        print(
+            f"[summary] {seq_name}: err_mag_m_bc mean={labels_df['err_mag_m_bc'].mean():.4f}, "
+            f"median={labels_df['err_mag_m_bc'].median():.4f}, "
+            f"max={labels_df['err_mag_m_bc'].max():.4f} "
+            f"(oracle comparison, not the headline target)"
         )
 
     print("\nDone. Handoff files are in data/processed/ — see data/README.md.")

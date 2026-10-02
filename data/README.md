@@ -1,20 +1,25 @@
 # Data setup (Part A)
 
-## 1. Download
+The team tracks:
+- `data/raw/euroc/` — IMU + ground-truth CSVs for MH_01, MH_02, MH_03
+- `data/interim/aligned_*.csv` — timestamp-aligned tables
+- `data/processed/` — window labels + raw window tensors
+
+Camera folders (`cam0/`, `cam1/`) stay out of git (see `.gitignore`).
+
+## 1. Download (only if the CSVs are missing)
 From the ETH Research Collection page for EuRoC (DOI: 10.3929/ethz-b-000690084),
 download **"Machine Hall Datasets (ZIP)"**. It contains MH_01–MH_05; we only use
 MH_01_easy, MH_02_easy, MH_03_medium for Phase 1.
 
 ## 2. Extract only what we need
-Each sequence's images are large and unused. If the zip lets you extract selectively:
-
 ```bash
 mkdir -p data/raw/euroc
 unzip MachineHall.zip -d data/raw/euroc
 ```
 
-Then, per sequence, delete or ignore `mav0/cam0/` and `mav0/cam1/` — we never read
-image files in this project.
+Delete or ignore `mav0/cam0/` and `mav0/cam1/` — we never read image files
+in Phase 1.
 
 ## 3. Expected layout
 ```
@@ -33,17 +38,17 @@ data/raw/euroc/
 ```bash
 python scripts/verify_data.py
 ```
-This checks that both CSVs exist for every sequence in `configs/config.yaml`,
-prints their column headers, and tells you plainly if a column name doesn't
-match what `loader.py` expects. **Run this first — every other script assumes
-it passed.**
 
 ## 5. Then build the windows + labels
 ```bash
 python scripts/make_windows.py
 ```
 Produces, per sequence, in `data/processed/`:
-- `windows_<seq>.csv` — one row per window: ids, timestamps, drift labels
+- `windows_<seq>.csv` — ids, timestamps, raw drift (`err_mag_m`, `err_dx/dy/dz`)
+  and oracle bias-corrected copies (`err_*_bc`)
 - `windows_raw_<seq>.npy` — raw IMU arrays, shape (N_windows, 200, 6)
 
-These two files are the hand-off to Part B (EDA/splits) and Part C (features).
+```bash
+python scripts/window_length_diagnostic.py
+```
+writes `results/diagnostics/window_length.csv`.

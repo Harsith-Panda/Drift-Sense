@@ -1,0 +1,19 @@
+# Conda environment for Drift-Sense Phase 1 (classic ML).
+# Create:  conda env create -f environment.yml
+# Update:  conda env update -f environment.yml --prune
+# Activate: conda activate drift-sense
+name: drift-sense
+channels:
+  - conda-forge
+dependencies:
+  - python=3.11
+  - numpy
+  - pandas
+  - pyyaml
+  - pytest
+  - matplotlib
+  - jupyter
+  - ipykernel
+  - scikit-learn
+  - scipy
+  - pip

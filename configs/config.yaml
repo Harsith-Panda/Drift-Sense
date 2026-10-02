@@ -22,5 +22,8 @@ integration:
   # and print what it found — then you can pin them here for reproducibility.
   gravity_sign: -1        # will become +1 or -1
   rotation_convention: "body_to_world" # will become "body_to_world" or "world_to_body"
+  # Primary labels always integrate RAW IMU. A second oracle label
+  # (err_*_bc) subtracts GT biases inside the integrator; that is not a
+  # config switch and must not replace err_mag_m.
 
 seed: 42
