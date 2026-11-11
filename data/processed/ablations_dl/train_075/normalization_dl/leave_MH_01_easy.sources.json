@@ -1,0 +1,8 @@
+{
+  "statistics_sha256": "eb7da80cb234d6a251feb1330569ef10e0034b8c0a020cdce2f457f32102914f",
+  "inputs": {
+    "data/processed/windows_MH_02_easy.csv": "c7a69ec2e8e90a22ed25830ef0fac85e09a8e17d1e9082ee0b42c98784adaa38",
+    "data/processed/windows_raw_MH_02_easy.npy": "1d1a3820a23b74cee2fe1b109252b53bb79b10f7a9f98641970066ace4af768f",
+    "data/processed/features_MH_02_easy.csv": "698db21817cecf3cb887cb73f08619e998e80d082dbde5b2687d1f258e703ecf"
+  }
+}

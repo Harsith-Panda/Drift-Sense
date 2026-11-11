@@ -1,0 +1,29 @@
+# R1 contribution for R2/R5 to consume; no model results are implied.
+schema_version: 1
+seeds: [42, 43, 44]
+model: cnn1d  # R2 must supply the encoder/head and shared trainer
+A1:
+  design: full_factorial
+  dropout: [0.0, 0.3]
+  weight_decay: [0.0, 0.0001]
+  early_stopping: [false, true]
+  # Augmentation probes are additional one-factor comparisons with all three on.
+  augmentation_probes: [noise_only, crop_mask_only, noise_and_crop_mask]
+  epochs: 100
+  scheduler: none  # isolate early stopping from other validation-driven controls
+  early_stopping_patience: 15
+  early_stopping_min_delta: 0.00001
+  monitor: validation_loss
+  checkpoint_when_early_stopping_off: final_epoch
+A2:
+  fractions: [0.5, 0.75, 1.0]
+  selection: chronological_prefix_of_inner_training
+  rounding: ceil
+  validation_test: fixed
+  refit_normalization_and_physics: true
+  dropout: 0.3
+  weight_decay: 0.0001
+  early_stopping: true
+  augmentation: none
+  epochs: 100
+  scheduler: none

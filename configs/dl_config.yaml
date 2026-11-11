@@ -1,0 +1,32 @@
+# Phase 2 starting values, not tuned results. Phase 1 config remains authoritative
+# for window generation (400 samples, gx gy gz ax ay az) and raw drift labels.
+data:
+  processed_dir: data/processed
+  sequences: [MH_01_easy, MH_02_easy]
+seed: 42
+batch_size: 32
+epochs: 100
+learning_rate: 0.001
+weight_decay: 0.0001
+dropout: 0.3
+validation_fraction: 0.2
+validation_gap_seconds: 4.0
+# Training-only observation corruptions; see docs/r1_data_foundation.md.
+augmentation:
+  gaussian_noise: false
+  random_crop: false  # crop-and-mask; NEVER shorten the labelled interval
+  noise_fraction: 0.1  # fraction of sensor per-sample noise std, clipped at 3 sigma
+  crop_max_samples: 4  # at most 1% of samples masked at the window edges
+use_camera: false
+device: cpu
+num_workers: 0
+early_stopping:
+  enabled: true
+  patience: 15
+  min_delta: 0.00001
+  monitor: validation_loss
+camera:
+  image_size: 64
+  frames_per_window: 3
+  processed_dir: data/processed/camera
+  # R3 owns optical flow and image preparation; arrays are uint8.

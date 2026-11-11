@@ -1,0 +1,1448 @@
+{
+  "schema_version": 1,
+  "fold_id": "leave_MH_02_easy",
+  "train_keys": [
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 0
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 1
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 2
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 3
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 4
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 5
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 6
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 7
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 8
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 9
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 10
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 11
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 12
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 13
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 14
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 15
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 16
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 17
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 18
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 19
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 20
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 21
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 22
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 23
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 24
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 25
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 26
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 27
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 28
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 29
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 30
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 31
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 32
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 33
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 34
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 35
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 36
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 37
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 38
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 39
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 40
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 41
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 42
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 43
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 44
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 45
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 46
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 47
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 48
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 49
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 50
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 51
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 52
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 53
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 54
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 55
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 56
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 57
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 58
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 59
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 60
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 61
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 62
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 63
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 64
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 65
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 66
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 67
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 68
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 69
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 70
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 71
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 72
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 73
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 74
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 75
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 76
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 77
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 78
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 79
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 80
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 81
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 82
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 83
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 84
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 85
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 86
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 87
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 88
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 89
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 90
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 91
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 92
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 93
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 94
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 95
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 96
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 97
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 98
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 99
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 100
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 101
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 102
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 103
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 104
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 105
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 106
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 107
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 108
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 109
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 110
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 111
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 112
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 113
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 114
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 115
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 116
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 117
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 118
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 119
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 120
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 121
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 122
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 123
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 124
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 125
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 126
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 127
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 128
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 129
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 130
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 131
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 132
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 133
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 134
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 135
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 136
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 137
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 138
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 139
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 140
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 141
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 142
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 143
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 144
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 145
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 146
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 147
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 148
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 149
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 150
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 151
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 152
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 153
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 154
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 155
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 156
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 157
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 158
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 159
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 160
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 161
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 162
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 163
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 164
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 165
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 166
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 167
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 168
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 169
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 170
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 171
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 172
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 173
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 174
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 175
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 176
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 177
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 178
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 179
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 180
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 181
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 182
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 183
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 184
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 185
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 186
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 187
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 188
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 189
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 190
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 191
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 192
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 193
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 194
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 195
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 196
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 197
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 198
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 199
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 200
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 201
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 202
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 203
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 204
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 205
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 206
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 207
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 208
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 209
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 210
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 211
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 212
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 213
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 214
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 215
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 216
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 217
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 218
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 219
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 220
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 221
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 222
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 223
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 224
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 225
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 226
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 227
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 228
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 229
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 230
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 231
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 232
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 233
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 234
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 235
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 236
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 237
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 238
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 239
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 240
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 241
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 242
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 243
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 244
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 245
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 246
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 247
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 248
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 249
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 250
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 251
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 252
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 253
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 254
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 255
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 256
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 257
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 258
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 259
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 260
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 261
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 262
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 263
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 264
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 265
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 266
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 267
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 268
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 269
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 270
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 271
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 272
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 273
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 274
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 275
+    },
+    {
+      "seq_id": "MH_01_easy",
+      "window_id": 276
+    }
+  ],
+  "feature_order": [
+    "gx_mean",
+    "gx_std",
+    "gx_var",
+    "gx_rms",
+    "gx_min",
+    "gx_max",
+    "gx_ptp",
+    "gx_skew",
+    "gx_kurt",
+    "gx_zcr",
+    "gy_mean",
+    "gy_std",
+    "gy_var",
+    "gy_rms",
+    "gy_min",
+    "gy_max",
+    "gy_ptp",
+    "gy_skew",
+    "gy_kurt",
+    "gy_zcr",
+    "gz_mean",
+    "gz_std",
+    "gz_var",
+    "gz_rms",
+    "gz_min",
+    "gz_max",
+    "gz_ptp",
+    "gz_skew",
+    "gz_kurt",
+    "gz_zcr",
+    "ax_mean",
+    "ax_std",
+    "ax_var",
+    "ax_rms",
+    "ax_min",
+    "ax_max",
+    "ax_ptp",
+    "ax_skew",
+    "ax_kurt",
+    "ax_zcr",
+    "ay_mean",
+    "ay_std",
+    "ay_var",
+    "ay_rms",
+    "ay_min",
+    "ay_max",
+    "ay_ptp",
+    "ay_skew",
+    "ay_kurt",
+    "ay_zcr",
+    "az_mean",
+    "az_std",
+    "az_var",
+    "az_rms",
+    "az_min",
+    "az_max",
+    "az_ptp",
+    "az_skew",
+    "az_kurt",
+    "az_zcr",
+    "gx_dom_freq",
+    "gx_spec_energy",
+    "gx_spec_entropy",
+    "gy_dom_freq",
+    "gy_spec_energy",
+    "gy_spec_entropy",
+    "gz_dom_freq",
+    "gz_spec_energy",
+    "gz_spec_entropy",
+    "ax_dom_freq",
+    "ax_spec_energy",
+    "ax_spec_entropy",
+    "ay_dom_freq",
+    "ay_spec_energy",
+    "ay_spec_entropy",
+    "az_dom_freq",
+    "az_spec_energy",
+    "az_spec_entropy",
+    "acc_mag_mean",
+    "acc_mag_std",
+    "acc_mag_max",
+    "gyro_mag_mean",
+    "gyro_mag_std",
+    "gyro_mag_max",
+    "jerk_ax_rms",
+    "jerk_ay_rms",
+    "jerk_az_rms",
+    "jerk_mag_mean",
+    "jerk_mag_max",
+    "corr_gx_gy",
+    "corr_gx_gz",
+    "corr_gx_ax",
+    "corr_gx_ay",
+    "corr_gx_az",
+    "corr_gy_gz",
+    "corr_gy_ax",
+    "corr_gy_ay",
+    "corr_gy_az",
+    "corr_gz_ax",
+    "corr_gz_ay",
+    "corr_gz_az",
+    "corr_ax_ay",
+    "corr_ax_az",
+    "corr_ay_az"
+  ],
+  "imu_mean": [
+    -0.01660593201768665,
+    0.022546692546788975,
+    0.0829812823339394,
+    8.959390031747215,
+    -0.2708263203591549,
+    -3.5783321150789678
+  ],
+  "imu_std": [
+    0.15824390410792225,
+    0.13250994587788661,
+    0.09972165254878583,
+    1.165042819699388,
+    0.6277016268267621,
+    1.4134008540401672
+  ],
+  "feature_mean": [
+    -0.0166059320176862,
+    0.09772466914679967,
+    0.020611548884338186,
+    0.11024026152737632,
+    -0.22313498916399416,
+    0.1769574836693514,
+    0.4000924728333454,
+    -0.09482226797903834,
+    0.4524229192116316,
+    0.14093899007446412,
+    0.022546692546783157,
+    0.09931511530757035,
+    0.015619545924572669,
+    0.1095273289699087,
+    -0.20184071212413845,
+    0.2612978419202369,
+    0.4631385540443754,
+    0.09580374626468849,
+    1.5294513499094757,
+    0.23543515829284398,
+    0.08298128233392997,
+    0.07574816540592541,
+    0.009087722214814208,
+    0.12213206501841335,
+    -0.10635292963993746,
+    0.2628579268400701,
+    0.3692108564800077,
+    0.018398319170408243,
+    0.4584871124045761,
+    0.17235326583607027,
+    8.959390031748269,
+    0.79018645499691,
+    0.9148049241098357,
+    9.00961778080293,
+    6.721479090102286,
+    11.291690717208184,
+    4.570211627105897,
+    0.15109679798570771,
+    2.714949020438457,
+    0.36528143463351515,
+    -0.27082632035913057,
+    0.467536426810536,
+    0.3093551544025278,
+    0.6322344757002666,
+    -1.6031099509626956,
+    1.0527692496991576,
+    2.6558792006618526,
+    -0.02722597778838746,
+    0.959059555879623,
+    0.2991594509740054,
+    -3.5783321150782186,
+    0.5814946762629553,
+    0.4846533454065963,
+    3.644071768071196,
+    -5.211597219765342,
+    -2.0678047287906134,
+    3.1437924909747297,
+    -0.0008680882389692412,
+    1.738904784887228,
+    0.3636890059082725,
+    5.366425992779783,
+    1648.9315364300148,
+    0.43533136117814875,
+    13.471119133574007,
+    1249.8303291014631,
+    0.5215085578039932,
+    5.386281588447654,
+    727.0758087311668,
+    0.47820254030379933,
+    15.945848375451263,
+    73426.26827553243,
+    0.663095420492823,
+    19.63898916967509,
+    24765.15951361428,
+    0.6197728969840415,
+    33.14079422382672,
+    38869.224297402005,
+    0.6842167908915332,
+    9.792132341615398,
+    0.7962014221620212,
+    12.164307060499693,
+    0.19275806278350296,
+    0.08823694844399826,
+    0.41849155257395787,
+    174.00634730667505,
+    73.51654891664447,
+    114.67465991048594,
+    192.8856153849513,
+    621.074310177521,
+    -0.008004592187402338,
+    0.0038878584751561294,
+    -0.006507213790351473,
+    -0.0034179178436599725,
+    -0.08551376609944471,
+    -0.022277463567614,
+    0.0016117955752988666,
+    -0.005894385275650507,
+    -0.024800678270864407,
+    0.04478634654071847,
+    0.03652204725887447,
+    0.07788511980519099,
+    0.040044856372650685,
+    -0.2696808275418995,
+    0.0755377412520985
+  ],
+  "feature_std": [
+    0.06655512228957178,
+    0.1051733707954954,
+    0.04462662992800925,
+    0.11473436670793007,
+    0.2065116988565911,
+    0.18050547340453338,
+    0.340801130993287,
+    0.5207612949931643,
+    3.0314081220434987,
+    0.12909767055078836,
+    0.04403793628202511,
+    0.07586866148823707,
+    0.01801324264830747,
+    0.0779166433444676,
+    0.15825272463595094,
+    0.1706854117934815,
+    0.30154501141431694,
+    0.7605631470221815,
+    6.364069653028215,
+    0.1769360912474895,
+    0.029269194936753545,
+    0.05787864591065351,
+    0.012732780641200933,
+    0.04374997027634849,
+    0.13396096698021548,
+    0.12007751821360223,
+    0.23859603644611518,
+    0.48003280457897496,
+    2.5157258992203477,
+    0.11150116288364091,
+    0.665221653002568,
+    0.538897291187525,
+    0.8750563611985069,
+    0.674375234245195,
+    1.5558822306531999,
+    2.0061823740568374,
+    3.2108103704362936,
+    0.7965805940622691,
+    9.724975790595273,
+    0.2162076852346182,
+    0.29095391029939194,
+    0.3012720431898124,
+    0.4193563030177612,
+    0.2600688290747467,
+    0.7051269127776587,
+    0.8374390645890245,
+    1.4132992773709245,
+    0.3433233333923742,
+    3.672465405672834,
+    0.1749488209234957,
+    1.2300604167257498,
+    0.38277576580086287,
+    0.4436402402523269,
+    1.234059823974815,
+    1.5910476401663305,
+    1.412733711896164,
+    1.8943649473406377,
+    0.6695324721008998,
+    7.394190727186133,
+    0.23409080302604487,
+    7.752153016817166,
+    3570.13325552893,
+    0.2413870448698779,
+    24.266962057167397,
+    1441.1119905388437,
+    0.2357536483791481,
+    9.01566384004332,
+    1018.6310805038723,
+    0.18264381619072073,
+    26.305082330420923,
+    70447.36585894668,
+    0.21826242266279314,
+    16.27847673323261,
+    33548.576233061496,
+    0.20843010784698524,
+    38.7374765613861,
+    35576.6100601111,
+    0.2641779114655233,
+    0.10045350720470753,
+    0.6063250228823698,
+    1.9510617271771378,
+    0.1043399487654943,
+    0.06622820943182244,
+    0.23257822018907157,
+    171.8105242459591,
+    61.24691213524675,
+    115.44771119071791,
+    191.95730230372092,
+    552.6176926431112,
+    0.2950780615587731,
+    0.5801699860115361,
+    0.2631468769562783,
+    0.1973048392064197,
+    0.23345562561185398,
+    0.2500140816286177,
+    0.18488115549792628,
+    0.17109860884331096,
+    0.19967325276842704,
+    0.21649684361651775,
+    0.19356226933392057,
+    0.2186311156872994,
+    0.22003950041166248,
+    0.48403636407251044,
+    0.21454564365439244
+  ]
+}

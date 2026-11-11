@@ -1,0 +1,34 @@
+\section{DL data, splits and regularisation}
+We reuse 720 windows from MH\_01\_easy and 592 from MH\_02\_easy.
+Each contains 400 samples in six inertial channels. The two leave-one-flight-out
+folds retain the final $\lceil0.2N\rceil$ source windows for validation.
+Training intervals satisfy $\max(t_{end})+4\,s\leq\min(t_{validation,start})$.
+The resulting training/validation/test sizes are 450/119/720 and 553/144/592;
+23 candidate windows are purged in either fold.
+
+Means and population standard deviations are fitted only to inner training.
+The same saved statistics transform validation and test inputs. Physics bias is
+calibrated from the union of inner-training sensor intervals, with matched
+ground-truth timestamps also restricted to those intervals. Original Phase 1
+physics files remain separate. Labels and physics still use ground-truth initial
+states; this is an offline endpoint-error experiment, not autonomous navigation.
+
+The shared Dataset returns channels-first IMU, 104 engineered features, four
+physics values, magnitude and vector labels, and original window metadata.
+Optional camera inputs are three 64-by-64 grayscale frames scaled to $[0,1]$.
+Actual camera arrays await R3. Camera-off omits the key entirely.
+
+Augmentation affects training observations only. Clipped noise is bounded below
+sensor noise; edge crop-and-mask retains the full labelled interval. It does not
+represent a shorter physical trajectory. Targets and reference feature modalities
+remain unchanged. Time warping, amplitude scaling and target-changing crops are
+excluded. Task-dependent augmentation motivates this restriction
+\cite{iwana2021,wen2021}. Dropout and weight decay require trainer integration
+\cite{srivastava2014,loshchilov2019}.
+
+A1 prepares eight factorial combinations of dropout, decay and early stopping,
+plus three augmentation probes. A2 prepares nested 50, 75 and 100 percent prefixes
+of eligible inner training, with independent scalers and physics calibration.
+Validation and test remain fixed. There are 84 jobs across two folds and three
+seeds. No model experiments have been run; accuracy comparisons remain pending.
+A2 confounds chronological coverage with quantity and must be interpreted accordingly.

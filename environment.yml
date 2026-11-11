@@ -17,3 +17,6 @@ dependencies:
   - scikit-learn
   - scipy
   - pip
+  - pip:
+      - torch>=2.2,<3
+      - opencv-python>=4.9,<5

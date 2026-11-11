@@ -10,6 +10,6 @@ ipykernel==7.4.0
 scikit-learn==1.9.1
 scipy==1.17.1
 
-# Phase 2 — uncomment when DL work starts
-# torch
-# evo
+# Phase 2 data foundation (CPU/MPS default; select CUDA wheels separately if needed)
+torch>=2.2,<3
+opencv-python>=4.9,<5

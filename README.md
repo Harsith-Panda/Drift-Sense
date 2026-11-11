@@ -31,3 +31,8 @@ Then run scripts from the repo root, e.g. `python scripts/verify_data.py`.
 python scripts/make_windows.py    # Part A labels
 python scripts/run_eda.py         # Part B figures → figures/eda/
 ```
+
+## Phase 2 — R1 data foundation
+
+See [R1 data foundation](docs/r1_data_foundation.md) for leakage-safe splits,
+fold-local normalization, assumptions and reproduction commands.
