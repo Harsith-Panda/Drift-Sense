@@ -1,0 +1,33 @@
+\section{Architecture logic}
+E1 and E2 answer whether a network on the raw window can replace the 104 hand-made features. Both read the same channels-first tensor, shape $(6,400)$, and both end in the same linear head. For these two experiments the head has one output, $\mathrm{err\_mag\_m}$. The same head accepts four outputs (magnitude and the three axis errors) without another encoder. E1 and E2 do not train that vector; correction remains a later use of the head.
+
+The 1D-CNN is three blocks. Each block is a convolution, batch normalisation, a ReLU, and dropout \cite{ioffe2015,srivastava2014}. The kernels are 7, 5 and 3, with 32, 64 and 64 channels. Stride is 1 and padding keeps all 400 steps. One pre-pooling activation therefore depends on $1+(7-1)+(5-1)+(3-1)=13$ input samples, which is $65\,\mathrm{ms}$ at $200\,\mathrm{Hz}$. That is the ``small pattern detector'' in the plan: a spike or a short oscillation, not the whole two-second window. Global average pooling then reduces the 64 channels to a 64-number embedding, so a detection anywhere in the window can move the embedding. The encoder has 24{,}352 parameters. The magnitude head adds 65, for 24{,}417 in total.
+
+The LSTM reads the same window as a sequence of 400 vectors of length 6 \cite{hochreiter1997}. Its hidden size is 64, and the embedding is the hidden state after the last step, not a pool of local detections. A one-layer LSTM does not apply the library's inter-layer dropout, so the configured dropout rate is applied to that 64-d state. The encoder has 18{,}432 parameters and the full model 18{,}497. Convolution can spot a local shape and is indifferent to where in the window it occurred. The LSTM can carry the first step forward to the last step. Those are different inductive biases, which is why they are separate rows rather than one mixed network \cite{ordonez2016,herath2020ronin}.
+
+Training minimises mean squared error with AdamW \cite{loshchilov2019}. The learning rate starts at $10^{-3}$ with weight decay $10^{-4}$, and a plateau schedule halves it after five non-improving validation epochs. Early stopping restores the best validation epoch, with patience 15 and a minimum improvement of $10^{-5}$. The seed is 42. Dropout is 0.3. Before each validation pass, and therefore in the saved checkpoint, the CNN's batch-norm statistics are recomputed on the training windows with dropout turned off. Later blocks would otherwise be normalised on dropped activations and applied to full ones. The test flight is not used for that pass, for early stopping, or for the schedule.
+
+\section{IMU model results}
+Table~\ref{tab:imu} is seed 42 on the two leave-one-flight folds. Phase 1 Lasso, on the same folds, has mean MAE $2.50\,\mathrm{cm}$ and $R^2$ $0.756$. The mean baseline is $4.53\,\mathrm{cm}$.
+
+\begin{table}[t]
+\centering
+\caption{Test-flight scores for E1 and E2. MAE and RMSE are in centimetres.}
+\label{tab:imu}
+\begin{tabular}{llrrrr}
+\hline
+Model & Test flight & MAE & RMSE & $R^2$ & Bias \\
+\hline
+E1 CNN & MH\_01 & 10.20 & 15.02 & $-5.80$ & $+5.45$ \\
+E1 CNN & MH\_02 & 17.53 & 27.56 & $-11.31$ & $+1.67$ \\
+E2 LSTM & MH\_01 & 3.52 & 4.53 & $0.382$ & $-1.25$ \\
+E2 LSTM & MH\_02 & 3.53 & 4.80 & $0.627$ & $-1.49$ \\
+\hline
+\end{tabular}
+\end{table}
+
+The LSTM stays near the validation error. Restored epochs are 14 and 27. Validation MAE is $2.20\,\mathrm{cm}$ and $2.77\,\mathrm{cm}$; test MAE is $3.52\,\mathrm{cm}$ and $3.53\,\mathrm{cm}$. Both runs stop before epoch 100 because validation has levelled off, not because the loss diverged. The LSTM beats the mean baseline on both flights and does not beat Lasso on either. Mean $R^2$ across the two folds is $0.50$, against Lasso's $0.756$.
+
+The CNN does overfit, and the curves show the shape of it. On the MH\_02 training fold, training MAE under dropout falls from $13.4\,\mathrm{cm}$ at the restored epoch to about $2.5\,\mathrm{cm}$, while validation MAE stays near $11\,\mathrm{cm}$ after an early best of $9.4\,\mathrm{cm}$ at epoch 2. The other fold restores epoch 5, where validation MAE is $4.85\,\mathrm{cm}$, and then validation rises to $7.7\,\mathrm{cm}$ rather than blowing up. Early stopping keeps those early epochs. On the held-out flight the CNN is worse still ($10.2\,\mathrm{cm}$ and $17.5\,\mathrm{cm}$) and its $R^2$ is negative, so it is worse than predicting the test flight's own mean. A $65\,\mathrm{ms}$ field plus pooling does not, on these two flights, recover the centimetre-scale residual that the hand-made features capture.
+
+An eight-epoch grid on the validation block only, recorded in \texttt{results/metrics/imu\_hparam\_grid.csv}, does not replace these runs and does not touch the test flight. With dropout off, validation MAE falls to $2.8\,\mathrm{cm}$ and $3.1\,\mathrm{cm}$. Learning rate $10^{-4}$ does not fit in eight epochs. That is a validation observation, not a new test score. The training curves are in \texttt{results/metrics/} and the test files are \texttt{results/predictions/E1\_*.csv} and \texttt{E2\_*.csv}.
