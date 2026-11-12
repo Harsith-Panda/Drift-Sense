@@ -1,0 +1,69 @@
+{
+  "tier": "both",
+  "config": {
+    "data": {
+      "processed_dir": "data/processed",
+      "sequences": [
+        "MH_01_easy",
+        "MH_02_easy"
+      ]
+    },
+    "seed": 42,
+    "batch_size": 32,
+    "epochs": 100,
+    "learning_rate": 0.001,
+    "weight_decay": 0.0001,
+    "dropout": 0.3,
+    "validation_fraction": 0.2,
+    "validation_gap_seconds": 4.0,
+    "augmentation": {
+      "gaussian_noise": false,
+      "random_crop": false,
+      "noise_fraction": 0.1,
+      "crop_max_samples": 4
+    },
+    "use_camera": false,
+    "device": "cpu",
+    "num_workers": 0,
+    "early_stopping": {
+      "enabled": true,
+      "patience": 15,
+      "min_delta": 1e-05,
+      "monitor": "validation_loss"
+    },
+    "camera": {
+      "image_size": 64,
+      "frames_per_window": 3,
+      "processed_dir": "data/processed/camera",
+      "interim_dir": "data/interim/camera",
+      "flow_method": "farneback",
+      "max_gap_factor": 2.5,
+      "seeds": [
+        42,
+        43,
+        44
+      ]
+    }
+  },
+  "e5_uses_camera": true,
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "epochs": 100,
+  "versions": {
+    "python": "3.11.15",
+    "numpy": "2.4.6",
+    "pandas": "3.1.1",
+    "sklearn": "1.9.1",
+    "opencv": "4.14.0",
+    "torch": "2.15.0"
+  },
+  "inputs": {
+    "data/processed/splits.json": "9afc5701d05f613f91fa15a3966a08ba7c827e376e0e185f9f3725ebc46d43bb",
+    "data/processed/splits_dl.json": "30920dd481ed74c8e3f98209c5170d36958ff0a890049aa282ce85ebdbda2e00",
+    "data/processed/camera/manifest_MH_01_easy.json": "df09e295ffebdc578ba427c2ddd8d2f2492ff2f4dc5efc4935fcdb43ab428f50",
+    "data/processed/camera/manifest_MH_02_easy.json": "9ac77b1fec067a326347040ce48b20062e3b485e04ff503af1668e053c5d8406"
+  }
+}

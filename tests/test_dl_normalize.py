@@ -97,12 +97,12 @@ def test_augmentation_bounds_labels_and_epochs():
 
 def test_camera_off_missing_and_synthetic_on(tmp_path):
     assert "cam" not in DriftDataset(P,FOLDS[0],"test")[0]
-    with pytest.raises(FileNotFoundError,match="R3"):
-        DriftDataset(P,FOLDS[0],"test",use_camera=True)
     # Isolated synthetic camera arrays validate the interface, not R3's image matching.
     processed=tmp_path/"data/processed"
-    shutil.copytree(P,processed)
+    shutil.copytree(P,processed,ignore=shutil.ignore_patterns("camera"))
     shutil.copytree(ROOT/"data/interim",tmp_path/"data/interim")
+    with pytest.raises(FileNotFoundError,match="R3"):
+        DriftDataset(processed,FOLDS[0],"test",use_camera=True)
     camera=processed/"camera";camera.mkdir(exist_ok=True)
     seq="MH_01_easy"
     w=pd.read_csv(processed/f"windows_{seq}.csv")

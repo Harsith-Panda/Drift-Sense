@@ -1,0 +1,46 @@
+{
+  "schema_version": 1,
+  "seq_id": "MH_02_easy",
+  "shape": [
+    592,
+    3,
+    64,
+    64
+  ],
+  "dtype": "uint8",
+  "window_interval": "[t_start_ns, t_end_ns)",
+  "feature_columns": [
+    "flow_mag_mean",
+    "flow_mag_std",
+    "flow_mag_p90_mean",
+    "flow_dx_mean",
+    "flow_dy_mean",
+    "flow_dx_std",
+    "flow_dy_std",
+    "blur_mean",
+    "blur_std",
+    "corners_mean"
+  ],
+  "camera_config": {
+    "image_size": 64,
+    "frames_per_window": 3,
+    "processed_dir": "data/processed/camera",
+    "interim_dir": "data/interim/camera",
+    "flow_method": "farneback",
+    "max_gap_factor": 2.5,
+    "seeds": [
+      42,
+      43,
+      44
+    ]
+  },
+  "inputs": {
+    "data/processed/windows_MH_02_easy.csv": "c7a69ec2e8e90a22ed25830ef0fac85e09a8e17d1e9082ee0b42c98784adaa38",
+    "data/interim/camera/frames64_MH_02_easy.npy": "823678f7e9c1f9fc38010b2cd3826fbe437349a85d06b5cde83aeb068256026c",
+    "data/interim/camera/frame_index_MH_02_easy.csv": "40390776cf2e5cf68509ff996785fbc953e2a693c6b9ea8f87c1037a099e167e"
+  },
+  "outputs": {
+    "cam_MH_02_easy.npy": "93ae19cc1d97d6c031d7400289c341ee0bba4a8da09d5ee9fa64921dd9525dca",
+    "camera_feats_MH_02_easy.csv": "d28ef76ac606fcb66be58cb77b44eac8448fcaa46e0aa1e133dfc68cbb9382ba"
+  }
+}

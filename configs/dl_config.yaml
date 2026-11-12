@@ -29,4 +29,9 @@ camera:
   image_size: 64
   frames_per_window: 3
   processed_dir: data/processed/camera
+  interim_dir: data/interim/camera
+  flow_method: farneback
+  max_gap_factor: 2.5  # reject gaps larger than 2.5 measured frame periods
+  # E5 explicitly enables camera input; keep the top-level IMU ablation flag.
+  seeds: [42, 43, 44]
   # R3 owns optical flow and image preparation; arrays are uint8.

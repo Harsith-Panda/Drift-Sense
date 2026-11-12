@@ -1,0 +1,114 @@
+\section{Camera branch}
+The camera branch tests two representations of visual observations while
+keeping the Phase~1 windows and R1/R2 production code unchanged. Both easy
+Machine Hall flights provide cam0 grayscale images at approximately
+$20\,\mathrm{Hz}$. Verification opened all 3,682 MH\_01 and 3,040 MH\_02
+images and found 40 frames inside every two-second window. No missing image
+or uncovered window was accepted.
+
+\subsection{Offline preprocessing and Tier 1}
+Images are converted once to $64\times64$ uint8 arrays. Integer nanosecond
+timestamps select the first, nearest-midpoint and last frames strictly
+inside the half-open window interval. The resulting tensors have shape
+$(720,3,64,64)$ and $(592,3,64,64)$, in the original window CSV order.
+Only raw images remain outside version control; small arrays, indices and
+checksum manifests are supplied for the other branches. R1's existing
+dataset divides these arrays by 255 to produce float32 inputs.
+
+Tier~1 uses Farneb\"ack dense forward flow between consecutive resized
+frames~\cite{r3farneback2003}. Displacements are divided by the actual frame
+interval to obtain resized-image pixels per second. A window aggregates
+only pairs whose two frames lie inside it. Ten predictors describe mean,
+standard deviation and mean per-pair 90th-percentile flow magnitude; signed
+horizontal/vertical mean and standard deviation; mean and standard
+deviation of Laplacian variance; and mean Shi--Tomasi corner
+count~\cite{r3shi1994}. IDs, timestamps and frame counts are excluded from
+the predictors. Feature extraction does not read labels, ground truth,
+physics or IMU data. Flow is an image-space observation, not a metric
+velocity measurement; sharpness and corners also depend on scene texture.
+
+The existing Phase~1 Lasso tuning code is reused unchanged, with its
+five purged time blocks, alpha grid, median-MAE selection and in-pipeline
+standardisation. Each variant is tuned on the training flight, refitted on
+that whole flight and evaluated on the other flight. Table~\ref{tab:r3tier1}
+reports the actual results. The 104-feature baseline reproduces mean MAE
+$2.50\,\mathrm{cm}$. Appending ten camera predictors increases the mean to
+$3.63\,\mathrm{cm}$. On the MH\_02 test fold, training-only CV selects
+$\alpha=0.1$, shrinking all coefficients to zero; this is a failure of this
+representation/tuning combination to improve cross-flight performance, not
+evidence that all visual representations are uninformative.
+
+\begin{table}[t]
+\centering
+\caption{Tier 1 held-out-flight results. MAE is in centimetres.}
+\label{tab:r3tier1}
+\begin{tabular}{llrr}
+\hline
+Inputs & Test flight & MAE & $R^2$ \\
+\hline
+104 IMU features & MH\_01 & 2.59 & 0.676 \\
+104 + 10 camera & MH\_01 & 2.62 & 0.673 \\
+104 IMU features & MH\_02 & 2.42 & 0.837 \\
+104 + 10 camera & MH\_02 & 4.65 & $-0.022$ \\
+\hline
+\end{tabular}
+\end{table}
+
+\subsection{Tier 2 architecture and evaluation}
+FlowNet motivates learning from temporally related images, but its
+supervised flow network and training corpus are not used
+here~\cite{r3dosovitskiy2015}. E5 stacks start/middle/end grayscale frames as
+three temporal channels. Three $3\times3$, stride-2 convolution blocks with
+16, 32 and 64 channels each apply four-group GroupNorm, ReLU and spatial
+dropout. GroupNorm uses per-example statistics instead of batch running
+statistics~\cite{r3wu2018}. Global average pooling produces the shared
+64-number embedding. A pre-pooling activation has a $15\times15$ receptive
+field. The encoder has 23,808 parameters and R2's unchanged linear head
+adds 65 for magnitude prediction. A four-output head is supported by the
+architecture but is not trained in E5.
+
+E5 uses R1's fixed partitions: 450/119 training/validation windows when
+testing MH\_01 and 553/144 when testing MH\_02, with the four-second temporal
+gap. AdamW, MSE, learning rate $10^{-3}$, weight decay $10^{-4}$, dropout 0.3,
+the validation plateau schedule and early stopping follow the existing DL
+configuration. The epoch limit is 100, stopping patience is 15 and minimum
+improvement is $10^{-5}$. R2's current trainer hard-codes IMU inputs, so an
+R3-specific runner reuses its seed/result helpers without modifying that
+trainer. Test tensors are evaluated after the best validation weights are
+restored. Seeds 42, 43 and 44 are all reported; none is selected by its test
+score. Restored epochs are 11/11/18 and 24/40/17 for the two test flights.
+
+\begin{table}[t]
+\centering
+\caption{Camera-only E5: mean $\pm$ sample standard deviation over three
+seeds. MAE and RMSE are in centimetres.}
+\label{tab:r3e5}
+\begin{tabular}{lrrr}
+\hline
+Test flight & MAE & RMSE & $R^2$ \\
+\hline
+MH\_01 & $3.79\pm0.11$ & $5.46\pm0.22$ & $0.100\pm0.073$ \\
+MH\_02 & $5.05\pm0.21$ & $7.67\pm0.12$ & $0.047\pm0.031$ \\
+\hline
+\end{tabular}
+\end{table}
+
+Equal-fold MAE, computed per seed and then averaged, is
+$4.42\pm0.12\,\mathrm{cm}$. This is close to the Phase~1 mean baseline
+($4.53\,\mathrm{cm}$) and worse than Lasso ($2.50\,\mathrm{cm}$). The
+$R^2$ values indicate weak explanatory power. Validation MAE at the selected
+epochs is 1.72--1.95 cm and 2.67--2.85 cm, below the test-flight errors,
+showing limited transfer. Training curves remain finite and early stopping
+restores the validation-selected weights; regularisation does not guarantee
+cross-flight accuracy. Training losses include dropout, so their magnitude
+is not directly comparable to evaluation-mode validation losses.
+
+The measured conclusion is that these Tier~1 features do not improve the
+Lasso baseline and this E5 image-only model does not outperform it. Whether
+the 64-dimensional camera embedding adds complementary information to IMU
+embeddings remains E6/A3, owned by the fusion/evaluation branches. Three
+seeds quantify optimisation spread, not uncertainty over a wider flight
+population. Lasso refits on the full training flight while E5 reserves a
+validation block; this protocol difference must accompany comparisons.
+Finally, the Phase~1 caveat remains: labels and physics priors initialise
+windows from ground-truth state, although camera preprocessing never uses it.

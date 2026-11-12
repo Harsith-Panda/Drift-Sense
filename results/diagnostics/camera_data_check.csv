@@ -1,0 +1,3 @@
+seq_id,status,n_frames,n_windows,images_opened,nominal_rate_hz,median_rate_hz,mean_rate_hz,max_frame_gap_ms,min_frames_per_window,max_frames_per_window,width,height
+MH_01_easy,ok,3682,720,3682,20,20.00005120013107,20.00000001390927,50.000128,40,40,752,480
+MH_02_easy,ok,3040,592,3040,20,19.999948800131072,19.999999983152357,50.000128,40,40,752,480

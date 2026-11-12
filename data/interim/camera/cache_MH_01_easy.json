@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "seq_id": "MH_01_easy",
+  "image_size": 64,
+  "resize": "INTER_AREA",
+  "opencv": "4.14.0",
+  "inputs": {
+    "data.csv": "62db628a8e6358f43df81e66ddb4597ab40b19a10f3d6cd80cc04d590b5adb12",
+    "sensor.yaml": "191748edddda5d1368188f5b0a3c4bed6c48842c178ef9d83c50cba17d66e819"
+  },
+  "outputs": {
+    "frames64_MH_01_easy.npy": "8803c4b9a50265b572693f69cb8a87feaba5b1850ba759c7e89d50a8559c1c05",
+    "frame_index_MH_01_easy.csv": "28340ee2a036ab71189e7d580aee9cbcd43548fc0e9f5374c13cb1e66d1d0649"
+  }
+}

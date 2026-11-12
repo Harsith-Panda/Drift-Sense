@@ -1,0 +1,141 @@
+{
+  "date": "2026-11-12",
+  "source_base_commit": "8488cd6",
+  "source_state": "working tree, including uncommitted R3 additions",
+  "prediction_files_checked": 10,
+  "total_prediction_rows": 6560,
+  "all_row_keys_match_windows": true,
+  "all_scores_match_saved_metrics_at_tolerance": 1e-10,
+  "label_tolerance_m": 1e-06,
+  "camera_manifests_and_source_hashes_match": true,
+  "phase1_lasso_reproduced_at_tolerance": 1e-12,
+  "constant_prediction_range_m": 0.0,
+  "executed_notebook_code_cells": 5,
+  "implementation_test_history": {
+    "r3_tests": 16,
+    "full_suite_tests": 85,
+    "result": "passed earlier in this work session; not rerun for report creation"
+  },
+  "per_prediction_file": [
+    {
+      "prediction_file": "results/predictions/T1_lasso_leave_MH_01_easy.csv",
+      "rows": 720,
+      "scores": {
+        "mae": 0.02593199927636818,
+        "rmse": 0.03279686510778223,
+        "r2": 0.6758334894905893,
+        "bias": -0.00040395742145036764
+      },
+      "max_difference_from_metrics_csv": 3.469446951953614e-18,
+      "max_label_rounding_difference_m": 0.0
+    },
+    {
+      "prediction_file": "results/predictions/T1_lasso_camera_leave_MH_01_easy.csv",
+      "rows": 720,
+      "scores": {
+        "mae": 0.02616408063547506,
+        "rmse": 0.03295067941403864,
+        "r2": 0.6727857366288046,
+        "bias": -0.0009423644140849144
+      },
+      "max_difference_from_metrics_csv": 1.1102230246251565e-16,
+      "max_label_rounding_difference_m": 0.0
+    },
+    {
+      "prediction_file": "results/predictions/T1_lasso_leave_MH_02_easy.csv",
+      "rows": 592,
+      "scores": {
+        "mae": 0.024157498531335246,
+        "rmse": 0.0317512560467839,
+        "r2": 0.836592995235945,
+        "bias": -0.0019803614735613303
+      },
+      "max_difference_from_metrics_csv": 0.0,
+      "max_label_rounding_difference_m": 0.0
+    },
+    {
+      "prediction_file": "results/predictions/T1_lasso_camera_leave_MH_02_easy.csv",
+      "rows": 592,
+      "scores": {
+        "mae": 0.046532497016738755,
+        "rmse": 0.07941542720243862,
+        "r2": -0.022253490156803002,
+        "bias": 0.011717221569207294
+      },
+      "max_difference_from_metrics_csv": 6.938893903907228e-18,
+      "max_label_rounding_difference_m": 0.0
+    },
+    {
+      "prediction_file": "results/predictions/E5_leave_MH_01_easy.csv",
+      "rows": 720,
+      "scores": {
+        "mae": 0.03911155760288239,
+        "rmse": 0.05595926791379177,
+        "r2": 0.05627051928871085,
+        "bias": 0.003828771577941047
+      },
+      "max_difference_from_metrics_csv": 0.0,
+      "max_label_rounding_difference_m": 5.9533978191694814e-08
+    },
+    {
+      "prediction_file": "results/predictions/E5_seed43_leave_MH_01_easy.csv",
+      "rows": 720,
+      "scores": {
+        "mae": 0.03742079867257012,
+        "rmse": 0.055843849639468396,
+        "r2": 0.0601594657468677,
+        "bias": 0.008773162961006165
+      },
+      "max_difference_from_metrics_csv": 0.0,
+      "max_label_rounding_difference_m": 5.9533978191694814e-08
+    },
+    {
+      "prediction_file": "results/predictions/E5_seed44_leave_MH_01_easy.csv",
+      "rows": 720,
+      "scores": {
+        "mae": 0.037178839412000446,
+        "rmse": 0.05200806829038396,
+        "r2": 0.18483613434200574,
+        "bias": 0.003457628521654341
+      },
+      "max_difference_from_metrics_csv": 0.0,
+      "max_label_rounding_difference_m": 5.9533978191694814e-08
+    },
+    {
+      "prediction_file": "results/predictions/E5_leave_MH_02_easy.csv",
+      "rows": 592,
+      "scores": {
+        "mae": 0.050770280127589766,
+        "rmse": 0.07805908356883944,
+        "r2": 0.01236663856369391,
+        "bias": -0.00029051646187498763
+      },
+      "max_difference_from_metrics_csv": 0.0,
+      "max_label_rounding_difference_m": 5.9534903895652747e-08
+    },
+    {
+      "prediction_file": "results/predictions/E5_seed43_leave_MH_02_easy.csv",
+      "rows": 592,
+      "scores": {
+        "mae": 0.04830745587477813,
+        "rmse": 0.07577535373395164,
+        "r2": 0.06931053069738857,
+        "bias": 0.0012120350792601301
+      },
+      "max_difference_from_metrics_csv": 0.0,
+      "max_label_rounding_difference_m": 5.9534903895652747e-08
+    },
+    {
+      "prediction_file": "results/predictions/E5_seed44_leave_MH_02_easy.csv",
+      "rows": 592,
+      "scores": {
+        "mae": 0.05252935938738488,
+        "rmse": 0.07613999922292523,
+        "r2": 0.060331667237332076,
+        "bias": -0.006546130252851022
+      },
+      "max_difference_from_metrics_csv": 0.0,
+      "max_label_rounding_difference_m": 5.9534903895652747e-08
+    }
+  ]
+}

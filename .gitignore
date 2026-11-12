@@ -1,7 +1,7 @@
-# Camera images are huge and unused in Phase 1. IMU + GT CSVs and
-# data/interim/aligned_*.csv ARE tracked (team decision).
+# Raw camera images stay local; cam0 metadata and processed arrays are tracked.
+# IMU + GT CSVs and data/interim/aligned_*.csv remain tracked.
 data/raw/**/cam0/data/
-data/raw/**/cam0/data/
+data/raw/**/cam1/
 
 venv/
 .venv/
