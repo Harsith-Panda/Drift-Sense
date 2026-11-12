@@ -1,0 +1,10 @@
+experiment,model,mae_cm MH_01,mae_cm MH_02,mae_cm,seed_sd_cm,r2
+IMUlstm,"raw IMU, LSTM",2.994,4.38,3.687,0.062,0.314
+IMUcnn,"raw IMU, 1D-CNN",2.614,2.584,2.599,0.117,0.719
+E3,H1: IMU + features + physics,2.532,3.768,3.15,0.083,0.527
+E3_min10,H1 (warm-up),2.591,2.688,2.639,0.033,0.729
+E6,H3: IMU + camera,2.98,4.067,3.523,0.389,0.376
+E6_min10,H3 (warm-up),2.815,2.882,2.848,0.048,0.64
+E4,H2: physics + correction (LSTM),2.236,2.069,2.153,0.013,0.817
+E4cnn,H2: physics + correction (CNN),2.229,2.034,2.132,0.021,0.821
+PHYS,physics alone,2.246,1.965,2.106,,0.821
