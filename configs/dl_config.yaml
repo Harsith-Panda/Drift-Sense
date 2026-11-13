@@ -35,3 +35,12 @@ camera:
   # E5 explicitly enables camera input; keep the top-level IMU ablation flag.
   seeds: [42, 43, 44]
   # R3 owns optical flow and image preparation; arrays are uint8.
+hybrid:
+  # R4 (E3, E4, E6, E7). Optimiser settings are the shared ones above, so the
+  # hybrids are directly comparable with E1/E2. The LSTM was chosen because E2
+  # generalised and E1 did not; a validation-only grid confirmed the defaults.
+  imu_encoder: lstm
+  seeds: [42, 43, 44]
+  grad_clip: 1.0
+  vector_head: true  # extra E4 run with the 4-value head for drift correction (C1)
+  e7_candidates: [E3, E4, E6]  # E7 = best of these on VALIDATION MAE + camera flow numbers
