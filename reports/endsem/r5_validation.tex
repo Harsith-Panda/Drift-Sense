@@ -1,0 +1,68 @@
+\section{Technical Validation, Ablations and Drift Correction}
+\label{sec:validation}
+
+Rigorous evaluation of learned visual-inertial odometry drift predictors requires demonstrating cross-phase comparability, isolating architectural components through controlled ablations, and validating practical navigational utility through end-point dead-reckoning correction~\cite{r5sturm2012,r5zhang2018}.
+
+\subsection{Cross-Phase Comparability and Benchmark Anchoring}
+To ensure that performance variations are attributable strictly to architectural advances rather than data shifts or scaling discrepancies~\cite{r5melis2018}, our evaluation harness (\texttt{dl\_eval.py}) first reproduces Phase~1 benchmarks bit-for-bit on the identical leave-one-sequence-out splits (\texttt{splits.json}):
+\begin{itemize}
+    \item \textbf{Mean Baseline:} $\mathrm{MAE} = 4.53$\,cm, $R^2 = -0.06$.
+    \item \textbf{Phase 1 Tuned Lasso (E0):} $\mathrm{MAE} = 2.50$\,cm ($0.02504$\,m), $R^2 = 0.76$.
+    \item \textbf{Calibrated Physics Prior:} $R^2 = 0.820$.
+\end{itemize}
+Unit tests (\texttt{test\_dl\_eval.py}) strictly enforce reproduction of these anchors before downstream models are evaluated.
+
+\subsection{Core Experiment Suite (E0--E7)}
+Table~\ref{tab:ablation_experiments} compares all model families over 3 random seeds ($42, 123, 999$). Pure IMU sequence models without physics inductive biases underfit the small dataset ($1{,}312$ total windows), with 1D-CNN (E1) yielding $19.87$\,cm MAE and LSTM (E2) achieving $4.36$\,cm MAE. Direct intermediate fusion (H1, E3) requires substantial training data to learn physics relations from scratch ($17.05$\,cm MAE).
+
+In contrast, \textbf{Hybrid H2 (E4)} leverages the analytical physics drift prediction as an immutable base prior ($\hat{y} = a \cdot \mathrm{phys\_mag} + b + s \cdot z$) with a zero-initialized residual head. This achieves \textbf{$2.30 \pm 0.09$\,cm MAE} and \textbf{$R^2 = 0.79$}, successfully outperforming the Phase~1 Lasso baseline ($2.50$\,cm) with low seed variance.
+
+\begin{table}[t]
+\centering
+\caption{Cross-model validation and ablation results (mean $\pm$ std over 3 seeds).}
+\label{tab:ablation_experiments}
+\resizebox{\columnwidth}{!}{%
+\begin{tabular}{lllccc}
+\hline
+\textbf{ID} & \textbf{Model Family} & \textbf{Inputs} & \textbf{MAE (cm)} & \textbf{RMSE (cm)} & \textbf{$R^2$} \\ \hline
+E0 & Phase 1 Lasso & 104 Hand-crafted & $2.50 \pm 0.00$ & $3.23$ & $0.76$ \\
+E1 & 1D-CNN & Raw IMU & $19.87 \pm 3.12$ & $20.74$ & $-10.10$ \\
+E2 & LSTM & Raw IMU & $4.36 \pm 2.46$ & $5.10$ & $0.33$ \\
+E3 & Hybrid H1 & IMU + Feat + Phys & $17.05 \pm 3.15$ & $18.17$ & $-6.73$ \\
+\textbf{E4} & \textbf{Hybrid H2 (Main)} & \textbf{Phys + Residual} & $\mathbf{2.30 \pm 0.09}$ & $\mathbf{2.91}$ & $\mathbf{0.79}$ \\
+E5 & Camera CNN & $3 \times 64 \times 64$ frames & $16.45 \pm 0.35$ & $19.94$ & $-8.30$ \\
+E6 & Hybrid H3 & IMU + Camera & $17.30 \pm 2.25$ & $18.40$ & $-7.62$ \\
+E7 & Best Ensemble & Multi-modal & $2.41 \pm 0.29$ & $2.99$ & $0.78$ \\ \hline
+\end{tabular}%
+}
+\end{table}
+
+\subsection{Systematic Ablations (A1--A5)}
+\begin{itemize}
+    \item \textbf{A1 (Regularization):} Disabling dropout and weight decay on Hybrid H2 yields $3.66$\,cm MAE, while enabling full regularization with early stopping maintains stability without overfitting.
+    \item \textbf{A2 (Data Scaling):} Evaluating training set fractions ($50\% \to 75\% \to 100\%$) demonstrates monotonic improvement: MAE decreases from $2.44$\,cm to $2.33$\,cm and $2.29$\,cm, indicating headroom for scaling.
+    \item \textbf{A4 (Seed Stability):} Hybrid H2 exhibits tight seed clustering ($\mathrm{std} = 0.086$\,cm) compared to unconstrained deep models (LSTM $\mathrm{std} = 2.46$\,cm), proving the stabilizing effect of physics grounding.
+    \item \textbf{A5 (Flight Segments):} Segmenting trajectories into take-off (first $20\%$) and steady cruise (remaining $80\%$) confirms that take-off dynamics exhibit substantially larger uncalibrated drift ($8.8$--$13.0$\,cm on mean baseline), whereas Hybrid H2 preserves sub-$3$\,cm error across both flight phases.
+\end{itemize}
+
+\subsection{Trajectory Drift Correction}
+To demonstrate closed-loop utility, \texttt{correct\_trajectory.py} reconstructs full continuous trajectories using non-overlapping $2.0$\,s windows (every 8th window, $2.0$\,s stride)~\cite{r5brossard2020}. The predicted 3-axis error vector $[\hat{e}_x, \hat{e}_y, \hat{e}_z]$ is subtracted from dead-reckoned endpoints:
+\begin{equation}
+\mathbf{p}_{\mathrm{corrected}}^{(k)} = \mathbf{p}_{\mathrm{dead\text{-}reckoned}}^{(k)} - \hat{\mathbf{e}}^{(k)}.
+\end{equation}
+As shown in Table~\ref{tab:trajectory_correction}, trajectory drift correction reduces per-window endpoint MAE by over $94\%$ and cumulative Absolute Trajectory Error (ATE) by $\mathbf{>98\%}$ on both test sequences (from $87.1$\,m down to $1.66$\,m on MH\_01\_easy, and $72.1$\,m down to $0.57$\,m on MH\_02\_easy).
+
+\begin{table}[t]
+\centering
+\caption{Dead-reckoned trajectory drift correction performance (C1).}
+\label{tab:trajectory_correction}
+\resizebox{\columnwidth}{!}{%
+\begin{tabular}{lccccc}
+\hline
+\textbf{Sequence} & \textbf{Windows} & \textbf{Raw MAE (cm)} & \textbf{Corr MAE (cm)} & \textbf{Raw ATE (m)} & \textbf{Corr ATE (m)} \\ \hline
+MH\_01\_easy & 90 & $121.5$ & $6.9$ ($-94.3\%$) & $87.09$ & $\mathbf{1.66}$ ($\mathbf{-98.0\%}$) \\
+MH\_02\_easy & 74 & $120.0$ & $5.3$ ($-95.6\%$) & $72.09$ & $\mathbf{0.57}$ ($\mathbf{-99.0\%}$) \\ \hline
+\end{tabular}%
+}
+\end{table}
+
