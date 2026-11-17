@@ -1,0 +1,682 @@
+\documentclass[11pt,a4paper,twocolumn]{article}
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{charter}
+\usepackage{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{xcolor,colortbl}
+\usepackage{caption}
+\usepackage{url}
+\usepackage[hidelinks]{hyperref}
+
+% ---- page geometry (measured from the original PDF) ----
+\geometry{a4paper,left=54pt,right=54pt,top=54pt,bottom=54pt}
+\setlength{\columnsep}{21.61pt}
+
+% ---- body leading and paragraph style (measured) ----
+\makeatletter
+\renewcommand\normalsize{%
+  \@setfontsize\normalsize{10.95}{14.90}%
+  \abovedisplayskip 10\p@ \@plus2\p@ \@minus5\p@
+  \abovedisplayshortskip \z@ \@plus3\p@
+  \belowdisplayshortskip 6\p@ \@plus3\p@ \@minus3\p@
+  \belowdisplayskip \abovedisplayskip}
+\makeatother
+\normalsize
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{6.13pt plus 1.6pt minus 0.6pt}
+
+% ---- section headings: centred, Roman numeral, full caps, body size ----
+\renewcommand{\thesection}{\Roman{section}}
+\makeatletter
+\renewcommand\section{\@startsection{section}{1}{\z@}%
+  {11.95pt \@plus 2pt \@minus 2pt}%
+  {5.98pt \@plus 1pt}%
+  {\centering\normalfont\normalsize\MakeUppercase}}
+\renewcommand\subsection{\@startsection{subsection}{2}{\z@}%
+  {5.97pt \@plus 2pt \@minus 1pt}%
+  {2.97pt \@plus 1pt}%
+  {\normalfont\normalsize\bfseries}}
+\makeatother
+\makeatletter
+\renewcommand\@seccntformat[1]{\csname the#1\endcsname.\hspace{0.5em}}
+\makeatother
+\setcounter{secnumdepth}{1}
+
+% ---- captions ----
+\captionsetup[figure]{name=Fig.,labelsep=period,font=footnotesize,
+  justification=justified,singlelinecheck=false}
+\renewcommand{\thetable}{\Roman{table}}
+\captionsetup[table]{name=TABLE,labelsep=newline,font=footnotesize,
+  justification=centering,singlelinecheck=false}
+
+% ---- lists ----
+\usepackage{enumitem}
+\setlist[itemize]{leftmargin=14pt,labelsep=5pt,topsep=0pt,
+  itemsep=6.96pt plus 1.6pt minus 0.6pt,parsep=0pt,partopsep=0pt}
+
+% ---- float placement (keep figures near their first reference) ----
+\renewcommand{\topfraction}{0.9}
+\renewcommand{\bottomfraction}{0.8}
+\renewcommand{\textfraction}{0.07}
+\renewcommand{\floatpagefraction}{0.75}
+\renewcommand{\dbltopfraction}{0.9}
+\renewcommand{\dblfloatpagefraction}{0.7}
+\setcounter{topnumber}{3}
+\setcounter{bottomnumber}{2}
+\setcounter{totalnumber}{4}
+\setcounter{dbltopnumber}{2}
+
+\newcommand{\MHA}{MH\_01}
+\newcommand{\MHB}{MH\_02}
+\newcommand{\Rsq}{$R^2$}
+
+\begin{document}
+
+\twocolumn[
+\begin{center}
+{\fontsize{17.28}{21}\selectfont\bfseries
+Drift-Sense: Deep Neural Networks for Predicting\\[2pt]
+Short-Window IMU Position Drift\par}
+\vspace{10pt}
+{\small
+\begin{tabular}{ccccc}
+Guru Manohar Gupta & Harsith Priyan S & Pranavi Mathur & Yatin Singh & Dadi Dinesh\\[1pt]
+{\scriptsize Enrollment ID: 2401010125} & {\scriptsize 2401010398} &
+{\scriptsize 2401020046} & {\scriptsize 2401010243} & {\scriptsize 2401010136}
+\end{tabular}\par}
+\vspace{12pt}
+Deep Learning Report (Part 2 of the Advanced Machine Learning + Deep Learning Project), CSAI\\
+Semester 5
+\vspace{10pt}
+\end{center}
+]
+
+\textbf{\textit{Abstract}}\textbf{---}A drone can work out where it is by
+adding up the readings of its motion sensor (an IMU). But small sensor errors
+get added up too, so the estimated position slowly drifts away from the real
+one. In Part 1 of this project we predicted the size of this drift with
+classical models and 104 hand-made features. The best one, Lasso, was off by $2.50\,\mathrm{cm}$ on average. In Part 2, this report, we ask a new question: can neural
+networks learn the drift on their own, straight from the raw sensor signal and
+from camera pictures? We build five neural networks and train them all under
+the same rules. We find three things. First, a network only learns well after
+we rescale the target: one network goes from $R^2 = -8.55$ to $0.72$. Second,
+camera pictures add noise, not accuracy. Third, the best network (H2) starts
+from a physics estimate and learns only a small correction. It is off by
+$2.13$--$2.15\,\mathrm{cm}$ on average ($R^2 = 0.82$) and gives almost the same answer
+every time we train it. It beats Lasso, but only ties the physics estimate it
+starts from. Used to fix a drifting path, it cuts the final position error from
+87 m to about 1.5 m on one flight and from 72 m to about 0.8--0.9 m on the
+other.
+
+\textbf{\textit{Index Terms}}\textbf{---}deep learning, CNN, LSTM, camera,
+sensor fusion, IMU drift.
+
+\section{Problem and Objectives}
+
+\subsection*{Problem statement}
+
+A drone has a motion sensor called an IMU. It measures how fast the drone turns
+(gyroscope) and how fast it speeds up (accelerometer). Adding these readings up
+over time gives the drone's position. This is called \textit{dead reckoning}.
+
+The trouble is that every small sensor error gets added up as well. After a few
+seconds the position can be off by metres. This is \textit{drift}. If a navigation
+system knows how big the drift is, it can decide how much to trust the sensor,
+fix the position, or switch to a backup.
+
+The task is the same as in Part 1. Given two seconds of raw IMU readings,
+predict the size of the drift in metres.
+
+\subsection*{What is new in Part 2}
+
+In Part 1 we designed 104 features by hand and used simple models such as
+Lasso. In Part 2 we let neural networks find useful patterns by themselves.
+Other research shows this can work [1,2], but those studies use hours of data.
+We have only two flights of the EuRoC dataset [3] and 1,312 short windows. This
+makes our project a tough test of neural networks on small data.
+
+\subsection*{Objectives}
+
+\begin{itemize}
+\item \textbf{Q1} Which works better on the raw signal, a CNN or an LSTM?
+\item \textbf{Q2} Which training choices decide whether a network learns at all?
+\item \textbf{Q3} Do camera pictures help?
+\item \textbf{Q4} How should several kinds of input be combined in one network?
+\item \textbf{Q5} Can a network's output be used to fix a drifting path?
+\end{itemize}
+
+\subsection*{An illustrative example}
+
+Suppose the true end point of a window is $(5,3,2)$ m and the sensor adds up to
+$(6,3,2)$ m. The drift is $1$ m. If our network predicts $1.03$ m, its error is $0.03$ m. The drift is what we predict. The error tells us how good the network
+is.
+
+\subsection*{Key terms}
+
+\textbf{MAE} is the average size of the prediction error, in cm. Lower is
+better. \Rsq{} tells how much of the ups and downs of the drift the network
+explains. 1 is perfect. 0 is no better than always guessing the average.
+\textbf{Seed} is the random starting point of a network. We train each network
+three times with different seeds to see how stable it is.
+
+\section{Related Work}
+
+\textbf{Learning from short IMU windows.} Adding up noisy IMU readings makes
+the position error grow quickly. IONet [1] showed a better way: cut the IMU
+stream into short fixed windows and train a network to predict the motion of
+each window. We use this window-based setup. Our windows are two seconds long
+(400 readings), and our networks are a 1D-CNN and an LSTM [4].
+
+\textbf{Physics plus a learned correction.} When data is small, it is often
+better not to make a network rediscover physics from scratch. TossingBot [5]
+starts from a physics estimate and lets the network learn only the remaining
+error. Our hybrid network H2 follows this idea.
+
+\textbf{Correcting dead reckoning.} AI-IMU [2] uses a network to improve
+inertial dead reckoning. We use a network output to correct a drifting path in
+Section VIII.
+
+\textbf{Measuring path error.} Sturm et al. [6] separate two kinds of error.
+\textit{Relative error} is measured over a fixed time interval. \textit{Absolute trajectory error} is measured along the whole path. Our label is a relative error over a
+fixed two-second interval. The path error in Section VIII is closer to an
+absolute trajectory error.
+
+\section{Data and Inputs}
+
+\subsection*{What the networks read}
+
+The sensor input is a table of six rows and 400 columns. The rows are the three
+gyroscope and three accelerometer channels. The 400 columns are two seconds of
+readings at 200 per second. The camera input is three small grayscale pictures
+($64 \times 64$): the first, middle and last of the window. The combined
+networks also get the 104 Part 1 features and four physics numbers.
+
+The label is \texttt{err\_mag\_m}, the drift size in metres. Windows move
+forward by 0.25 s each time. This gives 720 windows for flight \MHA{} and 592
+for flight \MHB{}. Every window starts from the true position and speed.
+
+\subsection*{A fair split}
+
+We train on one flight and test on the other, then swap. Windows overlap, so we
+must never let the test flight leak into training.
+
+Inside the training flight, we keep the last 20 \% of windows aside to check
+progress. We call this the \textit{validation block}. We also remove training windows
+that end within 4 s of it. The sizes (train / validation / test) are
+450/119/720 and 553/144/592. Scaling values come from training windows only [7].
+
+\subsection*{Augmentation}
+
+Augmentation means changing the training signals slightly to give the network
+more variety. Here it is risky, because changing a sensor signal can change the
+true drift. We only allow safe changes: a little noise and hiding a few
+readings at the edge of a window. We built and tested these tools, but they are \textit{switched off} in all reported results.
+
+\subsection*{The label scale problem}
+
+The drift is almost always about $1.21$ m and varies by only $5.8\,\mathrm{cm}$ (Fig. 1). A
+new network starts by predicting numbers near zero. It must first learn the big $1.2$ m offset before it can learn the small changes that matter.
+
+So for all hybrid models (from E3 on) as well as the standardised IMU baselines
+(IMUcnn, IMUlstm), we \textit{standardise} the label. We subtract the average and divide
+by the spread. The network learns this easier number, and we convert it back to
+metres.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.8\columnwidth]{figs/fig1.png}
+\caption{Drift size on \MHA{}. It is a large constant plus a few cm of
+variation.}
+\end{figure}
+
+\section{The Networks}
+
+\subsection*{1D-CNN (E1)}
+
+The CNN slides small filters along the signal to find short patterns, such as a
+quick spike. A filter in the first block looks at only 7 readings; the three blocks together cover 13 readings ($65$ ms). The
+patterns found are averaged over time into a short summary of 64 numbers. The
+network has 24,417 parameters (numbers it learns).
+
+One detail: dropout [8] (randomly switching off parts of the network) comes
+after a batch normalisation [9] step. This makes training and testing behave
+slightly differently. So before each progress check we refresh the
+normalisation values using the training windows with dropout off.
+
+\subsection*{LSTM (E2)}
+
+The LSTM [4] reads the 400 steps one by one, in order, and keeps a memory of 64
+numbers. Its last memory is its summary of the window. It has 18,497
+parameters.
+
+The CNN finds a pattern wherever it happens. The LSTM can remember what
+happened at the start when it reaches the end. We train both to see which suits
+this problem.
+
+\subsection*{Camera CNN (E5)}
+
+The three pictures are stacked like three colour channels. Three convolution
+blocks (16, 32, 64 filters) shrink the picture step by step. We use a
+normalisation layer that stays steady with small batches. At the end, one
+filter sees a $15 \times 15$ pixel patch, and the picture is turned into a
+summary of 64 numbers. The network has 23,873 parameters.
+
+For comparison, we also computed ten simple numbers about motion in the
+pictures, such as optical flow, sharpness and corners.
+
+\begin{table}[t]
+\caption{\textsc{Networks and parameter counts.}}
+\label{tab:params}
+\centering
+{\small\setlength{\tabcolsep}{4pt}
+\begin{tabular}{llr}
+\toprule
+Network & Reads & Params\\
+\midrule
+E1 1D-CNN & signal & 24,417\\
+E2 LSTM & signal & 18,497\\
+IMUcnn (scaled) & signal & 28,577\\
+IMUlstm (scaled) & signal & 22,657\\
+E5 camera CNN & 3 pictures & 23,873\\
+H1 / H2 (E3/E4) & signal+feat.+phys. & 37,889\\
+E4cnn (H2, CNN) & signal+feat.+phys. & 43,809\\
+H2 vector (E4vec) & same, 4 outputs & 38,084\\
+E7 & H2 + 10 pic.\ numbers & 38,529\\
+H3 (E6) & signal + camera & 50,561\\
+\bottomrule
+\end{tabular}}
+\end{table}
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=0.78\textwidth]{figs/fig2.png}
+\caption{Combined network. Each branch can be switched on or off. In H2, the
+network output is added to the physics estimate.}
+\end{figure*}
+
+\subsection*{Combined networks}
+
+A combined network has up to three branches (Fig. 2). One reads the raw signal
+(LSTM or CNN). One reads the 104 features plus four physics numbers. One reads
+the camera. Each branch gives a summary of 64 numbers. The summaries are
+joined, mixed by one small layer, and turned into one answer. We test three
+designs:
+
+\begin{itemize}
+\item \textbf{H1 (E3):} signal + features + physics. The network predicts the
+drift directly.
+\item \textbf{H2 (E4, main):} the answer is
+\begin{equation}
+\hat{y} = a\,\texttt{phys\_mag} + b + s\,z.
+\end{equation}
+Here $a\,\texttt{phys\_mag} + b$ is the physics estimate and $s\,z$ is the
+small correction the network adds. The last layer starts at zero. So \textit{before any training, H2 gives exactly the physics estimate}. This idea is called residual
+learning [5].
+\item \textbf{H3 (E6):} signal + camera. The network predicts directly.
+\end{itemize}
+
+Other versions are E4cnn (CNN instead of LSTM), E4vec (also predicts the $x$,
+$y$ and $z$ error), E7 (adds the ten picture-motion numbers), and IMUlstm and
+IMUcnn (raw signal only, with the standardised label). IMUcnn and IMUlstm read the same signal as E1 and E2 and use the same encoder and the same output layer. The difference is that they are built inside the combined-network framework with the feature and camera branches switched off, and that framework always adds the 64-number mixing layer. That layer is 4,160 extra numbers, so IMUcnn is larger than E1 and IMUlstm is larger than E2. Table I lists their sizes.
+
+
+\section{How We Trained}
+
+Every network is trained with the same recipe [7], so any difference comes from
+the design and not from the training.
+
+\begin{itemize}
+\item \textbf{Loss:} mean squared error.
+\item \textbf{Optimiser:} AdamW [10], learning rate $10^{-3}$, weight decay
+$10^{-4}$.
+\item \textbf{Batch size and dropout:} 32 and 0.3 (dropout as in [8]).
+\item \textbf{Learning rate:} halved after five epochs without progress.
+\item \textbf{Early stopping:} stop after 15 epochs without progress, then go
+back to the best saved copy of the network.
+\item \textbf{Combined networks:} gradients are clipped at 1.
+\end{itemize}
+
+Training runs on a normal CPU. The test flight is never used to make any
+choice. We report MAE, RMSE, \Rsq{} and bias on the test flight.
+
+The combined and camera networks use three seeds (42, 43, 44), shown as average
+$\pm$ spread. E1 and E2 use one seed. Three seeds show how stable training is.
+They do not prove the result holds on other flights. For reference only, we
+also show three non-neural results from Part 1: always guessing the average,
+Lasso, and the physics estimate alone.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\columnwidth]{figs/fig3.png}
+\caption{Training and validation loss for E1 (top) and E2 (bottom). The dashed
+line marks the saved epoch.}
+\end{figure}
+
+\section{Experiments and Results}
+
+\subsection*{Which network, and does label scale matter? (Q1, Q2)}
+
+\textbf{Without rescaling the label.} The LSTM does reasonably: $3.52\,\mathrm{cm}$ on both flights. The CNN fails: $10.20$ and $17.53\,\mathrm{cm}$. Its \Rsq{} is negative ($-5.80$ and
+$-11.31$), which is worse than always guessing the average.
+
+On \MHB{}, the CNN's training error falls to about $2.5\,\mathrm{cm}$, but its validation error stays near $11\,\mathrm{cm}$. It has memorised the training flight (Fig. 3). A
+pattern finder that must first learn a 1.2 m offset cannot find a few-cm change
+from 450 windows.
+
+\textbf{With the label rescaled.} The same CNN now gets $R^2 = 0.72$ ($2.60\,\mathrm{cm}$), up from $-8.55$. The LSTM gets weaker ($R^2 = 0.31$). So \textit{rescaling the label mattered more than the choice of network}. The training code also
+gained gradient clipping and a mixing layer, so rescaling is the main change
+but not the only one.
+
+\subsection*{Dropout and learning rate (Q2)}
+
+We ran a short eight-epoch test that uses only validation data (Table II).
+Removing dropout helps the CNN a lot (validation MAE $7.1 \rightarrow 3.0\,\mathrm{cm}$).
+This suggests dropout 0.3 is too strong for such a small network and so little
+data. A learning rate of $10^{-4}$ barely trains in eight epochs.
+
+We kept the same settings for every network to stay fair. So this table is
+something we noticed, not a tuned result.
+
+\begin{table}[t]
+\caption{\textsc{Validation-only test (average of two folds, 8 epochs)} [7].}
+\label{tab:hparam}
+\centering
+{\small
+\begin{tabular}{llcc}
+\toprule
+Network & Learn rate & Dropout & Val. MAE (cm)\\
+\midrule
+1D-CNN & $10^{-3}$ & 0.3 & 7.13\\
+1D-CNN & $10^{-3}$ & 0.0 & 2.97\\
+1D-CNN & $10^{-4}$ & 0.3 & 35.8\\
+LSTM & $10^{-3}$ & 0.3 & 2.76\\
+LSTM & $10^{-4}$ & 0.3 & 117.5\\
+\bottomrule
+\end{tabular}}
+\end{table}
+
+\subsection*{Do camera pictures help? (Q3)}
+
+We checked all 6,722 pictures [7]. Every window has 40 frames. The camera CNN
+gets $3.79 \pm 0.11\,\mathrm{cm}$ and $5.05{\pm}0.21\,\mathrm{cm}$, about $4.42\,\mathrm{cm}$ on average and $R^2 \approx 0.07$. This is close to always guessing the average ($4.53\,\mathrm{cm}$).
+
+Its validation error ($1.7$--$2.9\,\mathrm{cm}$) is much lower than its test error. So what
+it learns on one flight does not carry over to the other. Adding the camera to
+the signal network (H3) makes training less stable: on E6 \MHB{} the sample
+standard deviation across seeds is $\pm 0.51\,\mathrm{cm}$, and across both folds the per-seed means span $3.09$ to $3.85\,\mathrm{cm}$, a min-to-max range of $0.76\,\mathrm{cm}$. Adding the ten picture-motion
+numbers to H2 (E7) changes less than the seed spread. These numbers are in
+pixels, not metres, so they say little about real speed.
+
+This shows the limits of tiny grayscale pictures. It does not show that cameras
+are useless.
+
+\subsection*{How should inputs be combined? (Q4)}
+
+Table III and Fig. 4 compare all networks. ``Minimum 10 epochs'' means the
+network was not allowed to keep a saved copy from before epoch 10 (see
+Section VII).
+
+Giving features and physics to a network as inputs (H1) works about as well as
+the CNN alone ($R^2 = 0.73$). Using physics as the starting answer (H2) helps
+most: $R^2 = 0.82$ with either an LSTM or a CNN, and only 0.01--0.05 cm
+change between seeds.
+
+H2 beats Part 1 Lasso on both flights. But it only ties the physics estimate.
+On \MHA{} it is $0.01$--$0.02\,\mathrm{cm}$ better, which is within seed noise. On \MHB{} it is $0.07$--$0.10\,\mathrm{cm}$ worse, which is more than the noise. The physics estimate is
+already close to the best $R^2$ we found in Part 1, so there is little left to
+learn. The physics starting point matters. The type of network does not.
+
+\begin{table}[t]
+\caption{\textsc{Test MAE (cm) on each held-out flight, spread over seeds, and
+mean} \Rsq{}\textsc{. Grey rows are non-neural references. Source:} [7].}
+\label{tab:main}
+\centering
+{\footnotesize\setlength{\tabcolsep}{5pt}
+\begin{tabular}{lccc}
+\toprule
+Network & \MHA{} & \MHB{} & \Rsq{}\\
+\midrule
+E1 CNN, raw label$^{\dagger}$ & 10.20 & 17.53 & $-8.55$\\
+E2 LSTM, raw label$^{\dagger}$ & 3.52 & 3.53 & 0.50\\
+E5 camera CNN & $3.79{\pm}0.11$ & $5.05{\pm}0.21$ & 0.07\\
+IMU LSTM, scaled & $2.99{\pm}0.14$ & $4.38{\pm}0.06$ & 0.31\\
+IMU 1D-CNN, scaled & $2.61{\pm}0.12$ & $2.58{\pm}0.12$ & 0.72\\
+\midrule
+E3 H1 & $2.53{\pm}0.07$ & $3.77{\pm}0.10$ & 0.53\\
+E3 H1, min.\ 10 epochs & $2.59{\pm}0.05$ & $2.69{\pm}0.07$ & 0.73\\
+E6 H3 (+camera) & $2.98{\pm}0.33$ & $4.07{\pm}0.51$ & 0.38\\
+E6 H3, min.\ 10 epochs & $2.82{\pm}0.10$ & $2.88{\pm}0.03$ & 0.64\\
+E4 H2, LSTM & $2.24{\pm}0.01$ & $2.07{\pm}0.02$ & \textbf{0.82}\\
+E4cnn H2, CNN & $2.23{\pm}0.02$ & $2.03{\pm}0.05$ & \textbf{0.82}\\
+E4vec H2, 4 outputs & $2.22{\pm}0.03$ & $2.09{\pm}0.03$ & 0.82\\
+E7 H2 + picture nums & $2.24{\pm}0.01$ & $2.11{\pm}0.12$ & 0.81\\
+\midrule
+\rowcolor[gray]{0.92} Guess the average & 4.40 & 4.65 & $-0.03$\\
+\rowcolor[gray]{0.92} Lasso (Part 1) & 2.59 & 2.42 & 0.76\\
+\rowcolor[gray]{0.92} Physics estimate only & 2.25 & 1.97 & 0.82\\
+\bottomrule
+\end{tabular}}
+
+{\footnotesize $^{\dagger}$ one seed (42), raw label. ``Scaled'' =
+standardised label.}
+\end{table}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\columnwidth]{figs/fig4.png}
+\caption{Average test MAE of every network (bars show spread over seeds).
+Dashed line: Part 1 Lasso.}
+\end{figure}
+
+\section{What Happens During Training}
+
+\subsection*{The validation block picks bad saved copies}
+
+Our validation block is the end of the training flight, when the drone is
+mostly landing. There the drift varies by only $2.2$--$3.6\,\mathrm{cm}$ (against $6.3$--$8.8\,\mathrm{cm}$ in training). So it is a poor judge of which epoch is best.
+
+H2 is safe, because epoch 0 is the physics estimate and early stopping can go
+back to it (Fig. 5). The other networks have nothing to fall back on. On \MHB{},
+H1 and the IMU LSTM kept their epoch-1 copy in all three seeds. That is almost
+an untrained network.
+
+So we tried a simple rule: do not keep any copy from before epoch 10, the point where the \textit{training} curves flatten. The test flight played no part in choosing
+10. H1 improved from $R^2$ 0.53 to 0.73, and H3 from 0.38 to 0.64. Validation
+error got worse while test error got better, which confirms the validation
+block was misleading. We report both versions.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\columnwidth]{figs/fig5.png}
+\caption{H2 validation error per epoch for three seeds. Dashed line: physics
+estimate (epoch 0).}
+\end{figure}
+
+\subsection*{Take-off versus the rest of the flight}
+
+We split each test flight into take-off (the first 20 \%) and the rest
+(Fig. 6). Guessing the average is off by $8.8$ and $13.0\,\mathrm{cm}$ at take-off, but only $3.3$ and $2.6\,\mathrm{cm}$ later. So take-off is the hard part.
+
+The signal-only LSTM reaches $11.9\,\mathrm{cm}$ on \MHB{} take-off. H2 gets $2.75\,\mathrm{cm}$ there, against $2.06\,\mathrm{cm}$ for the physics estimate. But H2 is slightly better afterwards ($1.90$ vs.\ $1.94\,\mathrm{cm}$). The learned correction helps in normal flight but hurts at
+take-off, a kind of motion the validation block never contains.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\columnwidth]{figs/fig6.png}
+\caption{Error at take-off (first 20 \%) and in the rest of each test flight.}
+\end{figure}
+
+\begin{table}[t]
+\caption{\textsc{Path correction with E4vec (range over three seeds),
+against the physics-only correction. End MAE in cm; final and mean error
+in m.}}
+\label{tab:traj}
+\centering
+{\small\setlength{\tabcolsep}{4.2pt}
+\begin{tabular}{lccc}
+\toprule
+Flight & End MAE & Final & Mean\\
+\midrule
+\MHA{} before & 121.5 & 87.1 & 43.5\\
+\MHA{} physics & 6.90 & 1.66 & ---\\
+\MHA{} after & 6.5--6.8 & 1.49--1.54 & 0.81--0.84\\
+\MHB{} before & 120.0 & 72.1 & 36.7\\
+\MHB{} physics & 5.29 & 0.57 & ---\\
+\MHB{} after & 5.4--5.5 & 0.83--0.93 & 0.49--0.55\\
+\bottomrule
+\end{tabular}}
+\end{table}
+
+\section{Fixing a Drifting Path}
+
+E4vec predicts the $x$, $y$ and $z$ error as well as its size. We subtract the
+predicted error from the end point of each window. To avoid counting
+overlapping windows twice, we use every eighth window (2 s steps): 90 steps on
+\MHA{} and 74 on \MHB{}. We recomputed this for all three seeds from the saved
+test predictions [7] (Table IV, Fig. 7).
+
+Two metrics tell different stories, so we report both. At the window end points
+the two methods are the same within seed noise: using only the physics estimate
+for the same correction gives $6.90$ and $5.29\,\mathrm{cm}$, against $6.54$ and $5.37\,\mathrm{cm}$ for E4vec. The cumulative path error separates them, and it does not favour the
+same method on both flights. On \MHA{}, E4vec ends 1.49 m from the truth against
+1.66 m for physics alone, cutting the 87.1 m raw drift by 98.1 \% against
+98.0 \%. On \MHB{}, physics alone is the better of the two, 0.57 m against
+0.83 m for seed 42 ($0.89 \pm 0.05$ m over three seeds), cutting the 72.1 m raw
+drift by 99.0 \% against 98.5 \%. So the network makes the method work, but
+most of the gain comes from the physics estimate it starts from.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\columnwidth]{figs/fig7.png}
+\caption{Drifting path, corrected path and true path (E4vec, seed 42).}
+\end{figure}
+
+\section{Sources and Reproducibility}
+
+\subsection*{Where the numbers come from}
+
+Every result in this paper comes from files saved in the project repository
+[7]. The data are the two EuRoC flights \texttt{MH\_01\_easy} and
+\texttt{MH\_02\_easy} [3] (dataset doi: 10.3929/ethz-b-000690084). The files
+are:
+
+\begin{itemize}
+\item Test results of each network: \texttt{results/metrics/hybrid\_summary.csv},
+\texttt{hybrid\_runs.csv} and \texttt{imu\_e1\_e2.csv}.
+\item Camera network: \texttt{results/metrics/camera\_e5\_summary.csv}.
+\item Dropout and learning-rate test:
+\texttt{results/metrics/imu\_hparam\_grid.csv}.
+\item Saved test predictions: \texttt{results/predictions/}.
+\item Ablation tables: \texttt{results/ablations/}.
+\item Path correction:
+\texttt{src/vio\_drift/\allowbreak correction/\allowbreak correct\_trajectory.py}.
+\item Network code: \texttt{src/vio\_drift/models/dl/}.
+\item Training scripts: \texttt{scripts/train\_dl.py}, \texttt{train\_camera.py} and \texttt{train\_hybrid.py}.
+\item Shared settings: \texttt{configs/dl\_config.yaml}.
+\item Split and data notes: \texttt{docs/r1\_data\_foundation.md}.
+\end{itemize}
+
+\subsection*{What we checked}
+
+We recomputed the take-off split and the path correction ourselves from the
+saved predictions. The values in this paper are our recomputed values.
+
+The full test suite runs across the whole repository, PyTorch-dependent files
+included: at commit 20b8b20 the suite is 139 tests, all passing, none skipped. The R5 suite on its own (\texttt{tests/test\_dl\_eval.py} and \texttt{tests/test\_correction.py}) is 12 tests, all passing.
+
+\subsection*{What we did not rerun}
+
+We did not retrain the networks for this paper. The test results are the ones
+committed to the repository. We also did not rerun the raw-data steps.
+
+The one-command script \texttt{run\_phase2.sh} is the authoritative reproduction entry point: it reproduces every table in \texttt{results/ablations/}, recomputes the trajectory correction, and runs the 12-test R5 subset (\texttt{tests/test\_dl\_eval.py} and \texttt{tests/test\_correction.py}) in a single command. It does not run the full test suite, and it does not regenerate every figure here: \texttt{scripts/generate\_figures.py} writes the ablation and trajectory figures, while Figs. 2, 3 and 5 come from other scripts, Fig. 1 is a redrawn panel of the committed label-distribution figure, and Figs. 4 and 6 were drawn for this paper over a different set of models. Both \texttt{run\_phase2.sh} and \texttt{scripts/collect\_final\_results.py} use verified model predictions, with no placeholder camera data and no fixed blend, and the committed \texttt{results/ablations/*.csv} are the verified tables.
+
+\subsection*{How to rerun}
+
+Install PyTorch and the packages listed in the repository. The ablation tables, the trajectory correction and the R5 test suite all run from one command: \texttt{bash run\_phase2.sh}, which re-scores the saved predictions rather than retraining. To run the stages separately, use these scripts in order: \texttt{prepare\_dl\_data.py},
+\texttt{train\_dl.py} (E1, E2), \texttt{make\_camera\_features.py} and
+\texttt{train\_camera.py} (E5), \texttt{train\_hybrid.py} (E3, E4, E6, E7, E4vec). The A2 training-set-size results are scored from the committed predictions in \texttt{results/predictions/} by \texttt{scripts/collect\_final\_results.py}. Run the tests with \texttt{python -m pytest tests/}.
+
+\section{Limitations and Conclusion}
+
+\subsection*{Limitations}
+
+\begin{itemize}
+\item Only two flights, so every comparison rests on two tests. Differences of
+a few hundredths of a cm are noise.
+\item Every window starts from the true position and speed, so real-world
+results would be worse.
+\item E1 and E2 use one seed and no label rescaling. Part 1 Lasso was tuned on
+the whole training flight, while the networks keep a validation block aside, so
+the reference rows are not a perfectly equal contest.
+\item The camera test used only tiny grayscale pictures. It does not prove that
+cameras are useless.
+\item Augmentation was prepared but switched off to prevent label corruption.
+The training-set-size study (A2) was run on 50 \%, 75 \% and 100 \% subsets,
+yielding $2.12\,\mathrm{cm}$, $2.21\,\mathrm{cm}$ and $2.15\,\mathrm{cm}$ MAE respectively, demonstrating that H2
+is not data-bottlenecked at 50 \% because the physics prior provides an
+immediate strong foundation.
+\end{itemize}
+
+\subsection*{Conclusion}
+
+On this small dataset, neural networks learn the drift only when training is
+set up with care. The label must be rescaled. The saved-copy rule must not
+trust a landing-only validation block. Dropout may be too strong for small
+networks.
+
+A CNN on the raw signal then comes close to the Part 1 Lasso ($2.60\,\mathrm{cm}$). An LSTM
+is weaker. The camera adds noise. The combined network H2, which starts from a
+physics estimate and learns a small correction, is the best and most stable
+($2.13$--$2.15\,\mathrm{cm}$, $R^2$ 0.82). But it only ties the physics estimate. Its value
+is steady training, not new information.
+
+Next steps: a validation block that includes take-off, cruise and landing; more
+flights; a camera network that knows real-world scale; and tests that start
+from estimated positions instead of true ones.
+
+\section*{References}
+
+{\footnotesize
+\begin{list}{}{\leftmargin=22pt\labelwidth=18pt\itemsep=4pt\parsep=0pt}
+\item[{[1]}] C. Chen, X. Lu, A. Markham, and N. Trigoni, ``IONet: Learning to
+cure the curse of drift in inertial odometry,'' in \emph{AAAI Conference on
+Artificial Intelligence}, pp.~6468--6476, 2018. doi: 10.1609/aaai.v32i1.12102.
+\item[{[2]}] M. Brossard, A. Barrau, and S. Bonnabel, ``AI-IMU
+dead-reckoning,'' \emph{IEEE Transactions on Intelligent Vehicles}, vol.~5,
+no.~4, pp.~585--595, 2020. doi: 10.1109/TIV.2020.2980758.
+\item[{[3]}] M. Burri, J. Nikolic, P. Gohl, T. Schneider, J. Rehder, S. Omari,
+M. W. Achtelik, and R. Siegwart, ``The EuRoC micro aerial vehicle datasets,''
+\emph{International Journal of Robotics Research}, vol.~35, no.~10,
+pp.~1157--1163, 2016. doi: 10.1177/0278364915620033.
+\item[{[4]}] S. Hochreiter and J. Schmidhuber, ``Long short-term memory,''
+\emph{Neural Computation}, vol.~9, no.~8, pp.~1735--1780, 1997. doi:
+10.1162/neco.1997.9.8.1735.
+\item[{[5]}] A. Zeng, S. Song, J. Lee, A. Rodriguez, and T. Funkhouser,
+``TossingBot: Learning to throw arbitrary objects with residual physics,''
+\emph{IEEE Transactions on Robotics}, vol.~36, no.~4, pp.~1307--1319, 2020.
+doi: 10.1109/TRO.2020.2988642.
+\item[{[6]}] J. Sturm, N. Engelhard, F. Endres, W. Burgard, and D. Cremers,
+``A benchmark for the evaluation of RGB-D SLAM systems,'' in \emph{IEEE/RSJ
+International Conference on Intelligent Robots and Systems (IROS)},
+pp.~573--580, 2012. doi: 10.1109/IROS.2012.6385773.
+\item[{[7]}] G. M. Gupta, H. Priyan, P. Mathur, Y. Singh, and D. Dinesh,
+``Drift-Sense: source code, committed results, figures and notes.''
+\url{https://github.com/Harsith-Panda/Drift-Sense}. Repository URL as cited in
+the Part 1 report.
+\item[{[8]}] N. Srivastava, G. Hinton, A. Krizhevsky, I. Sutskever, and
+R. Salakhutdinov, ``Dropout: A simple way to prevent neural networks from
+overfitting,'' \emph{JMLR}, vol.~15, pp.~1929--1958, 2014.
+\url{https://jmlr.org/papers/v15/srivastava14a.html}.
+\item[{[9]}] S. Ioffe and C. Szegedy, ``Batch normalization: Accelerating deep
+network training by reducing internal covariate shift,'' in \emph{ICML},
+pp.~448--456, 2015. arXiv:1502.03167.
+\item[{[10]}] I. Loshchilov and F. Hutter, ``Decoupled weight decay
+regularization,'' in \emph{ICLR}, 2019. arXiv:1711.05101.
+\end{list}}
+
+\end{document}
